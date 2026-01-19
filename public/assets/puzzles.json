@@ -1,0 +1,252 @@
+[
+  {
+    "id": "fig_13_results_smooth_angry_bird_7x6x8_e1_k5_l10",
+    "name": "fig_13_results_smooth/Angry_bird_7x6x8_E1_K5_L10",
+    "level": 10
+  },
+  {
+    "id": "fig_13_results_smooth_moai_8x6x9_k3_l7",
+    "name": "fig_13_results_smooth/Moai_8x6x9_K3_L7",
+    "level": 7
+  },
+  {
+    "id": "fig_13_results_smooth_owl_5x5x5_k3_l7",
+    "name": "fig_13_results_smooth/Owl_5x5x5_K3_L7",
+    "level": 7
+  },
+  {
+    "id": "fig_13_results_smooth_pumpkin_9x9x9_e1_k5_l9",
+    "name": "fig_13_results_smooth/Pumpkin_9x9x9_E1_K5_L9",
+    "level": 9
+  },
+  {
+    "id": "fig_13_results_smooth_squirrel_6x9x8_e1_k3_l10",
+    "name": "fig_13_results_smooth/Squirrel_6x9x8_E1_K3_L10",
+    "level": 10
+  },
+  {
+    "id": "fig_13_results_voxelized_mario_12x16x4_k4_l8",
+    "name": "fig_13_results_voxelized/Mario_12x16x4_K4_L8",
+    "level": 8
+  },
+  {
+    "id": "fig_13_results_voxelized_shelf_9x9x4_k3_l15",
+    "name": "fig_13_results_voxelized/Shelf_9x9x4_K3_L15",
+    "level": 15
+  },
+  {
+    "id": "fig_13_results_voxelized_spider_12x13x6_k4_l8",
+    "name": "fig_13_results_voxelized/Spider_12x13x6_K4_L8",
+    "level": 8
+  },
+  {
+    "id": "fig_14_fabrication_airplane_14x6x17_k5_l10",
+    "name": "fig_14_fabrication/Airplane_14x6x17_K5_L10",
+    "level": 10
+  },
+  {
+    "id": "fig_14_fabrication_cow_4x7x8_e1_k4_l6",
+    "name": "fig_14_fabrication/Cow_4x7x8_E1_K4_L6",
+    "level": 6
+  },
+  {
+    "id": "fig_14_fabrication_cube_5x5x5_e1_k4_l16",
+    "name": "fig_14_fabrication/Cube_5x5x5_E1_K4_L16",
+    "level": 16
+  },
+  {
+    "id": "fig_14_fabrication_owl_5x5x5_k3_l7",
+    "name": "fig_14_fabrication/Owl_5x5x5_K3_L7",
+    "level": 7
+  },
+  {
+    "id": "fig_14_fabrication_sofa_7x8x6_k4_l8",
+    "name": "fig_14_fabrication/Sofa_7x8x6_K4_L8",
+    "level": 8
+  },
+  {
+    "id": "fig_15_disassembly_cube_6x6x6_e1_k5_l27",
+    "name": "fig_15_disassembly/Cube_6x6x6_E1_K5_L27",
+    "level": 27
+  },
+  {
+    "id": "fig_1_teaser_cow_4x7x8_e1_k4_l6",
+    "name": "fig_1_teaser/Cow_4x7x8_E1_K4_L6",
+    "level": 6
+  },
+  {
+    "id": "fig_supp_user_study_cube_5x5x5_e1_k3_l4_big_graph",
+    "name": "fig_supp_user_study/Cube_5x5x5_E1_K3_L4_big_graph",
+    "level": 4
+  },
+  {
+    "id": "fig_supp_user_study_cube_5x5x5_e1_k3_l4_small_graph",
+    "name": "fig_supp_user_study/Cube_5x5x5_E1_K3_L4_small_graph",
+    "level": 4
+  },
+  {
+    "id": "fig_supp_user_study_cube_5x5x5_e1_k3_l6_big_graph",
+    "name": "fig_supp_user_study/Cube_5x5x5_E1_K3_L6_big_graph",
+    "level": 6
+  },
+  {
+    "id": "fig_supp_user_study_cube_5x5x5_e1_k3_l6_small_graph",
+    "name": "fig_supp_user_study/Cube_5x5x5_E1_K3_L6_small_graph",
+    "level": 6
+  },
+  {
+    "id": "fig_supp_user_study_cube_5x5x5_e1_k3_l8",
+    "name": "fig_supp_user_study/Cube_5x5x5_E1_K3_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_4x4x4_e1_ga_cube_4x4x4_e1_k3_l8",
+    "name": "tbl_2_cubes_compare/Cube_4x4x4_E1_GA/Cube_4x4x4_E1_K3_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_4x4x4_e1_ga_cube_4x4x4_e1_k4_l5",
+    "name": "tbl_2_cubes_compare/Cube_4x4x4_E1_GA/Cube_4x4x4_E1_K4_L5",
+    "level": 5
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_4x4x4_e1_ga_cube_4x4x4_e1_k5_l5",
+    "name": "tbl_2_cubes_compare/Cube_4x4x4_E1_GA/Cube_4x4x4_E1_K5_L5",
+    "level": 5
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_4x4x4_e1_our_cube_4x4x4_e1_k3_l8",
+    "name": "tbl_2_cubes_compare/Cube_4x4x4_E1_Our/Cube_4x4x4_E1_K3_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_4x4x4_e1_our_cube_4x4x4_e1_k4_l6",
+    "name": "tbl_2_cubes_compare/Cube_4x4x4_E1_Our/Cube_4x4x4_E1_K4_L6",
+    "level": 6
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_4x4x4_e1_our_cube_4x4x4_e1_k5_l8",
+    "name": "tbl_2_cubes_compare/Cube_4x4x4_E1_Our/Cube_4x4x4_E1_K5_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_4x4x4_e1_our_cube_4x4x4_e1_k6_l5",
+    "name": "tbl_2_cubes_compare/Cube_4x4x4_E1_Our/Cube_4x4x4_E1_K6_L5",
+    "level": 5
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_5x5x5_e1_ga_cube_5x5x5_e1_k3_l9",
+    "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_GA/Cube_5x5x5_E1_K3_L9",
+    "level": 9
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_5x5x5_e1_ga_cube_5x5x5_e1_k4_l8",
+    "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_GA/Cube_5x5x5_E1_K4_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_5x5x5_e1_ga_cube_5x5x5_e1_k5_l8",
+    "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_GA/Cube_5x5x5_E1_K5_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_5x5x5_e1_our_cube_5x5x5_e1_k3_l11",
+    "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_Our/Cube_5x5x5_E1_K3_L11",
+    "level": 11
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_5x5x5_e1_our_cube_5x5x5_e1_k4_l16",
+    "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_Our/Cube_5x5x5_E1_K4_L16",
+    "level": 16
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_5x5x5_e1_our_cube_5x5x5_e1_k5_l14",
+    "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_Our/Cube_5x5x5_E1_K5_L14",
+    "level": 14
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_5x5x5_e1_our_cube_5x5x5_e1_k6_l13",
+    "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_Our/Cube_5x5x5_E1_K6_L13",
+    "level": 13
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_6x6x6_e1_ga_cube_6x6x6_e1_k3_l3",
+    "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_GA/Cube_6x6x6_E1_K3_L3",
+    "level": 3
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_6x6x6_e1_ga_cube_6x6x6_e1_k5_l8",
+    "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_GA/Cube_6x6x6_E1_K5_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_6x6x6_e1_our_cube_6x6x6_e1_k3_l15",
+    "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_Our/Cube_6x6x6_E1_K3_L15",
+    "level": 15
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_6x6x6_e1_our_cube_6x6x6_e1_k4_l20",
+    "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_Our/Cube_6x6x6_E1_K4_L20",
+    "level": 20
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_6x6x6_e1_our_cube_6x6x6_e1_k5_l27",
+    "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_Our/Cube_6x6x6_E1_K5_L27",
+    "level": 27
+  },
+  {
+    "id": "tbl_2_cubes_compare_cube_6x6x6_e1_our_cube_6x6x6_e1_k6_l17",
+    "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_Our/Cube_6x6x6_E1_K6_L17",
+    "level": 17
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k4_l12",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K4_L12",
+    "level": 12
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k4_l16",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K4_L16",
+    "level": 16
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k4_l4",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K4_L4",
+    "level": 4
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k4_l8",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K4_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k6_l12",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K6_L12",
+    "level": 12
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k6_l4",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K6_L4",
+    "level": 4
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k6_l8",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K6_L8",
+    "level": 8
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k8_l12",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K8_L12",
+    "level": 12
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k8_l4",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K8_L4",
+    "level": 4
+  },
+  {
+    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k8_l8",
+    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K8_L8",
+    "level": 8
+  }
+]
