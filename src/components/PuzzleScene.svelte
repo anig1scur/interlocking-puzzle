@@ -197,6 +197,7 @@
     updatePiecePositions(data.states["0"]);
     frameCameraToPuzzle();
     updateVisuals($activePieceId, isGhostMode);
+    isLoaded = true;
   }
 
   function updatePiecePositions(state: Record<string, [number, number, number]>) {

@@ -20,7 +20,7 @@
   <PuzzleScene bind:this={puzzleScene} />
 
   <div class="absolute top-5 left-5 right-5 pointer-events-none flex flex-col gap-4 items-start max-w-fit z-10">
-    <div class="pointer-events-auto">
+    <div class="pointer-events-auto z-50 relative">
       <PuzzleSelector />
     </div>
     
