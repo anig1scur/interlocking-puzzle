@@ -28,7 +28,7 @@
   
   let animationFrameId: number;
   let currentVoxelSize = 0.25;
-  const PIECE_COLORS = [0x3a7bd5, 0x00d2ff, 0x67e8f9, 0xf472b6, 0xa78bfa, 0xfbbf24];
+  const PIECE_COLORS = [0xE74C3C, 0x3498DB, 0x2ECC71, 0xF1C40F, 0xE67E22, 0x9B59B6, 0x1ABC9C];
   
   // Dragging interaction
   let raycaster = new THREE.Raycaster();
@@ -38,6 +38,7 @@
   let dragStartPos = new THREE.Vector3();
   let isDragging = false;
   let selectedPieceGroup: THREE.Group | null = null;
+  let isGhostMode = false;
 
   // Audio
   let audioCtx: AudioContext;
@@ -51,22 +52,20 @@
     checkWinCondition();
   }
 
-  $: if ($activePieceId) {
-    highlightPiece($activePieceId);
-  } else {
-    resetHighlights();
-  }
+  $: updateVisuals($activePieceId, isGhostMode);
 
   onMount(() => {
     initScene();
     initAudio();
     window.addEventListener('resize', onWindowResize);
     window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
     
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', onWindowResize);
       window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
       renderer.dispose();
     };
   });
@@ -87,11 +86,11 @@
     controls.enableDamping = true;
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    dirLight.position.set(10, 10, 10);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    dirLight.position.set(10, 20, 10);
     scene.add(dirLight);
 
     const spotLight = new THREE.SpotLight(0xffffff, 0.5);
@@ -154,7 +153,7 @@
     pieceMeshes = [];
 
     currentVoxelSize = data.voxel_size || 0.25;
-    const assetPath = `/assets/${data.id}/`; // Using absolute path for public folder
+    const assetPath = `${import.meta.env.BASE_URL}assets/${data.id}/`;
     const loader = new OBJLoader();
     const pieceIds = Object.keys(data.states["0"]);
 
@@ -197,6 +196,7 @@
     // Set initial positions
     updatePiecePositions(data.states["0"]);
     frameCameraToPuzzle();
+    updateVisuals($activePieceId, isGhostMode);
   }
 
   function updatePiecePositions(state: Record<string, [number, number, number]>) {
@@ -216,41 +216,57 @@
     }
   }
 
-  function highlightPiece(id: string) {
-    // Reset all first
-    resetHighlights();
+  function updateVisuals(activeId: string | null, ghost: boolean) {
+    if (!pieceGroups) return;
     
-    if (id && pieceGroups[id]) {
-      pieceGroups[id].traverse((child) => {
-        if ((child as THREE.Mesh).isMesh) {
-          const mesh = child as THREE.Mesh;
-          (mesh.material as THREE.MeshPhongMaterial).emissive.set(0xffffff);
-          (mesh.material as THREE.MeshPhongMaterial).emissiveIntensity = 0.4;
-
-          const outline = mesh.children.find(c => c.type === 'LineSegments') as THREE.LineSegments;
-          if (outline) {
-            (outline.material as THREE.LineBasicMaterial).opacity = 1.0;
-            (outline.material as THREE.LineBasicMaterial).color.set(0x00d2ff);
-            (outline.material as THREE.LineBasicMaterial).transparent = false;
-          }
-        }
-      });
-    }
-  }
-
-  function resetHighlights() {
     for (const id in pieceGroups) {
+      const isActive = id === activeId;
+      
       pieceGroups[id].traverse((child) => {
         if ((child as THREE.Mesh).isMesh) {
           const mesh = child as THREE.Mesh;
-          (mesh.material as THREE.MeshPhongMaterial).emissive.set(0x000000);
-          (mesh.material as THREE.MeshPhongMaterial).emissiveIntensity = 0;
+          const mat = mesh.material as THREE.MeshPhongMaterial;
+
+          const targetTransparent = ghost && !isActive;
+          
+          if (mat.transparent !== targetTransparent) {
+             mat.transparent = targetTransparent;
+             mat.needsUpdate = true;
+          }
+
+          if (targetTransparent) {
+             mat.opacity = 0.2;
+             mat.depthWrite = false;
+             mat.side = THREE.DoubleSide;
+          } else {
+             mat.opacity = 1.0;
+             mat.depthWrite = true;
+             mat.side = THREE.FrontSide;
+          }
 
           const outline = mesh.children.find(c => c.type === 'LineSegments') as THREE.LineSegments;
-          if (outline) {
-             (outline.material as THREE.LineBasicMaterial).opacity = 0.3;
-             (outline.material as THREE.LineBasicMaterial).color.set(0xffffff);
-             (outline.material as THREE.LineBasicMaterial).transparent = true;
+          const lineMat = outline?.material as THREE.LineBasicMaterial;
+
+          if (isActive) {
+            // Active highlighting
+            mat.emissive.set(0xffffff);
+            mat.emissiveIntensity = 0.4;
+
+            if (lineMat) {
+              lineMat.opacity = 1.0;
+              lineMat.color.set(0x00d2ff);
+              lineMat.transparent = false;
+            }
+          } else {
+            // Normal highlighting
+            mat.emissive.set(0x000000);
+            mat.emissiveIntensity = 0;
+
+            if (lineMat) {
+              lineMat.color.set(0xffffff);
+              lineMat.transparent = true;
+              lineMat.opacity = ghost ? 0.05 : 0.3;
+            }
           }
         }
       });
@@ -379,7 +395,18 @@
     }
   }
 
+  function onKeyUp(event: KeyboardEvent) {
+    if (event.code === 'Space') {
+      isGhostMode = false;
+    }
+  }
+
   function onKeyDown(event: KeyboardEvent) {
+    if (event.code === 'Space') {
+       if (!isGhostMode) isGhostMode = true;
+       return;
+    }
+
     if (event.key.toLowerCase() === 'r') {
       controls.reset();
       return;

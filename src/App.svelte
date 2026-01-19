@@ -38,7 +38,7 @@
   </div>
 
   <div class="absolute bottom-5 left-5 text-xs text-gray-400 pointer-events-none select-none">
-    <b class="text-white">Orbit</b>: Drag BG | <b class="text-white">Select</b>: Double-Click Piece | <b class="text-white">Move</b>: Drag Piece or <b class="text-white">Arrows/W/S</b> | <b class="text-white">Reset</b>: R
+    <b class="text-white">Orbit</b>: Drag BG | <b class="text-white">Select</b>: Double-Click Piece | <b class="text-white">Move</b>: Drag Piece or Arrows/W/S | <b class="text-white">Ghost Mode</b>: Hold Space | <b class="text-white">Reset</b>: R
   </div>
 
   <WinScreen />

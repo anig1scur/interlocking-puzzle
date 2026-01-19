@@ -6,7 +6,7 @@
 
   async function loadPuzzles() {
     try {
-      const res = await fetch('/assets/puzzles.json');
+      const res = await fetch(`${import.meta.env.BASE_URL}assets/puzzles.json`);
       const data = await res.json();
       puzzleList.set(data);
       
@@ -31,7 +31,7 @@
     resetGame();
     
     try {
-      const res = await fetch(`/assets/${id}/puzzle_data.json`);
+      const res = await fetch(`${import.meta.env.BASE_URL}assets/${id}/puzzle_data.json`);
       const data = await res.json();
       data.id = id; // ensure ID is attached
       puzzleData.set(data);
@@ -54,7 +54,7 @@
 
 <div class="glass-panel backdrop-blur-md bg-puzzle-glass border border-white/10 rounded-xl p-5 shadow-lg w-[300px]">
   <h1 class="text-2xl font-bold bg-gradient-to-br from-puzzle-cyan to-puzzle-blue bg-clip-text text-transparent mb-3">
-    High-Level Puzzle
+    Interlocking Puzzle
   </h1>
   
   <div class="text-sm opacity-80 mb-3 min-h-[1.25em]">

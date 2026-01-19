@@ -12,7 +12,7 @@
   let currentPieceId: string | null = null;
   let pieceGroup: THREE.Group | null = null;
   
-  const PIECE_COLORS = [0x3a7bd5, 0x00d2ff, 0x67e8f9, 0xf472b6, 0xa78bfa, 0xfbbf24];
+  const PIECE_COLORS = [0xE74C3C, 0x3498DB, 0x2ECC71, 0xF1C40F, 0xF3BF91, 0x9B59B6, 0x1ABC9C];
 
   $: if ($activePieceId !== currentPieceId) {
     updatePiece($activePieceId);
@@ -43,8 +43,8 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     container.appendChild(renderer.domElement);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
     dirLight.position.set(5, 5, 5);
     scene.add(dirLight);
 
@@ -83,7 +83,7 @@
 
     if (pieceGroup) scene.remove(pieceGroup);
 
-    const assetPath = `/assets/${$puzzleData.id}/`;
+    const assetPath = `${import.meta.env.BASE_URL}assets/${$puzzleData.id}/`;
     const loader = new OBJLoader();
     
     // Find index for color
