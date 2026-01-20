@@ -74,7 +74,7 @@
   <!-- Current Selection Display -->
   <div class="relative w-full">
     <button 
-      class="w-full text-left bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-2 md:p-4 transition-all group overflow-hidden relative"
+      class="w-full text-left cursor-pointer bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-2 md:p-4 transition-all group overflow-hidden relative"
       on:click={toggleOpen}
     >
       <div class="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mb-1 md:mb-3">Collection</div>
@@ -119,7 +119,7 @@
       <div class="absolute top-[calc(100%+12px)] left-0 right-0 bg-black/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-50 max-h-[60vh] overflow-y-auto custom-scrollbar flex flex-col p-2 gap-1 animate-in fade-in zoom-in-95 duration-200">
          {#each $puzzleList as p}
             <button
-              class="flex items-center gap-4 w-full p-2.5 rounded-xl text-left transition-all
+              class="flex items-center cursor-pointer gap-4 w-full p-2.5 rounded-xl text-left transition-all
                      {p.id === $currentPuzzleId 
                        ? 'bg-white/10 border border-white/20' 
                        : 'hover:bg-white/5 border border-transparent'}"

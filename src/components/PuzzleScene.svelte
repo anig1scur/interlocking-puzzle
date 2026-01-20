@@ -714,7 +714,7 @@
            const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
            if (mat.emissiveIntensity !== undefined) {
              mat.emissive.set(0xf2f2f2);
-             mat.emissiveIntensity = (isColliding ? 0.4 : 0.2) + pulse * 0.4;
+             mat.emissiveIntensity = (isColliding ? 0.6 : 0.1) + pulse * 0.2;
            }
         }
       });

@@ -9,12 +9,16 @@ export const activePieceId: Writable<string | null> = writable(null);
 export const isVictory: Writable<boolean> = writable(false);
 export const puzzleList: Writable<PuzzleManifestItem[]> = writable([]);
 export const isLoading: Writable<boolean> = writable(false);
+export const startTime: Writable<number | null> = writable(null);
+export const completionTime: Writable<number | null> = writable(null);
 
 export const resetGame = () => {
     currentStateId.set("0");
     moveCount.set(0);
     activePieceId.set(null);
     isVictory.set(false);
+  startTime.set(Date.now());
+  completionTime.set(null);
 };
 
 export const selectPuzzle = async (id: string) => {
