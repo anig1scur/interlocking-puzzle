@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { puzzleList, currentPuzzleId, puzzleData, resetGame, selectPuzzle, isLoading } from '../stores/gameStore';
 
   async function loadPuzzles() {
@@ -56,6 +56,12 @@
     selectPuzzle(id);
     isOpen = false;
   }
+
+  function scrollToActive(node: HTMLElement, condition: boolean) {
+     if (condition) {
+       node.scrollIntoView({ block: 'center', behavior: 'instant' });
+     }
+  }
 </script>
 
 <div class="glass-panel rounded-2xl p-2 md:p-6 shadow-2xl w-[240px] md:w-[340px] max-h-[85vh] flex flex-col relative border-none md:border md:border-white/5 select-none">
@@ -74,7 +80,7 @@
   <!-- Current Selection Display -->
   <div class="relative w-full">
     <button 
-      class="w-full text-left cursor-pointer bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-2 md:p-4 transition-all group overflow-hidden relative"
+      class="w-full text-left cursor-pointer transition-all group overflow-hidden relative"
       on:click={toggleOpen}
     >
       <div class="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mb-1 md:mb-3">Collection</div>
@@ -94,7 +100,7 @@
         </div>
         
         <div class="overflow-hidden flex-1">
-          <div class="font-bold text-white truncate group-hover:text-white transition-colors text-base md:text-lg">
+          <div class="font-bold text-white truncate group-hover:text-white transition-colors text-sm md:text-base">
             {$puzzleList.find(p => p.id === $currentPuzzleId)?.name.split('/').pop() || 'Select...'}
           </div>
            {#if $currentPuzzleId}
@@ -123,6 +129,7 @@
                      {p.id === $currentPuzzleId 
                        ? 'bg-white/10 border border-white/20' 
                        : 'hover:bg-white/5 border border-transparent'}"
+              use:scrollToActive={p.id === $currentPuzzleId}
               on:click={() => selectAndClose(p.id)}
             >
                <div class="w-12 h-9 bg-black rounded-lg overflow-hidden shrink-0 border border-white/5 grayscale group-hover:grayscale-0 transition-all">

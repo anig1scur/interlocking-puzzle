@@ -4,7 +4,7 @@
   import { fade, fly } from 'svelte/transition';
 
   export let show = false;
-  let leaderboard: Array<{name: string, time: number}> = [];
+  let leaderboard: Array<{name: string, time: number, moves?: number}> = [];
   let isLoading = false;
 
   $: if (show && $currentPuzzleId) {
@@ -28,7 +28,7 @@
   function formatTime(ms: number) {
     const s = Math.floor(ms / 1000);
     const m = Math.floor(s / 60);
-    return `${m}:${(s % 60).toString().padStart(2, '0')}.${(ms % 1000).toString().padStart(3, '0')}`;
+    return `${m}:${(s % 60).toString().padStart(2, '0')}.${(ms % 100).toString().padStart(2, '0')}`;
   }
 </script>
 
@@ -72,9 +72,18 @@
           >
             <div class="flex gap-4 items-center">
               <span class="text-white/20 font-black text-xs w-4">{i + 1}</span>
-              <span class="text-sm font-bold text-white/80 uppercase tracking-tight group-hover:text-white transition-colors">{entry.name}</span>
+              <span class="text-sm font-bold text-white/80 tracking-tight group-hover:text-white transition-colors">{entry.name}</span>
             </div>
-            <span class="text-xs font-mono text-white/40 group-hover:text-white/60 transition-colors uppercase">{formatTime(entry.time)}</span>
+            <div class="flex gap-6 items-center">
+              <div class="flex flex-col items-end">
+                <span class="text-[8px] font-black text-white/10 uppercase tracking-widest leading-none mb-1">Moves</span>
+                <span class="text-xs font-mono text-white/40 group-hover:text-white/60 transition-colors self-center ">{entry.moves ?? '-'}</span>
+              </div>
+              <div class="flex flex-col items-end min-w-[60px]">
+                <span class="text-[8px] font-black text-white/10 uppercase tracking-widest leading-none mb-1">Time</span>
+                <span class="text-xs font-mono text-white/40 group-hover:text-white/60 transition-colors ">{formatTime(entry.time)}</span>
+              </div>
+            </div>
           </div>
         {:else}
           <div class="flex flex-col items-center justify-center h-40 border border-dashed border-white/10 rounded-2xl shrink-0">

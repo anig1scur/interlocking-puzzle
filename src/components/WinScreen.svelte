@@ -3,7 +3,7 @@
   import { isVictory, nextPuzzle, currentPuzzleId, completionTime, moveCount, startTime } from '../stores/gameStore';
   
   let name = localStorage.getItem('player_name') || '';
-  let leaderboard: Array<{name: string, time: number}> = [];
+  let leaderboard: Array<{name: string, time: number, moves?: number}> = [];
   let isSubmitting = false;
   let isSubmitted = false;
   let isEditing = false;
@@ -71,7 +71,7 @@
   function formatTime(ms: number) {
     const s = Math.floor(ms / 1000);
     const m = Math.floor(s / 60);
-    return `${m}:${(s % 60).toString().padStart(2, '0')}.${(ms % 1000).toString().padStart(3, '0')}`;
+    return `${m}:${(s % 60).toString().padStart(2, '0')}.${(ms % 100).toString().padStart(2, '0')}`;
   }
 </script>
 
@@ -147,9 +147,12 @@
           <div class="flex justify-between items-center text-[11px] font-medium border-b border-white/5 pb-2 last:border-0 last:pb-0">
             <div class="flex gap-3 items-center">
               <span class="text-white/20 font-black w-4">{i + 1}</span>
-              <span class="text-white/80 uppercase">{entry.name}</span>
+              <span class="text-white/80">{entry.name}</span>
             </div>
-            <span class="text-white/40 font-mono tracking-tighter">{formatTime(entry.time)}</span>
+            <div class="flex gap-4 items-center">
+              <span class="text-[10px] text-white/20 font-mono">move: {entry.moves ?? '-'}</span>
+              <span class="text-white/40 font-mono tracking-tighter">{formatTime(entry.time)}</span>
+            </div>
           </div>
         {:else}
           <div class="text-[10px] text-white/20 py-4 text-center">Be the first to rank.</div>

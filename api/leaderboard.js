@@ -23,7 +23,7 @@ export default async function handler(request, response) {
       console.log(`[API] Fetching leaderboard for ${puzzleId}`);
       const { data, error } = await supabase
         .from('puzzle_records')
-        .select('name, time')
+        .select('name, time, moves')
         .eq('puzzle_id', puzzleId)
         .order('time', { ascending: true })
         .limit(10);

@@ -45,19 +45,30 @@
   let collisionCount = 0;
   let hitCounted = false;
   let isColliding = false;
+  let winOngoing = false;
 
   // Audio
   let audioCtx: AudioContext;
+
+  $: if ($currentPuzzleId) {
+    isLoaded = false;
+    winOngoing = false;
+  }
 
   $: if ($puzzleData && $puzzleData.id) {
     loadPuzzleAssets($puzzleData);
   }
 
-  $: if ($currentStateId && $puzzleData) {
+  $: if ($currentStateId && $puzzleData && isLoaded) {
     updatePiecePositions($puzzleData.states[$currentStateId]);
   }
 
-  $: updateVisuals($activePieceId, isGhostMode, isDragging ? ($activePieceId ?? undefined) : undefined);
+  $: {
+    $activePieceId;
+    collisionCount = 0;
+  }
+
+  $: updateVisuals($activePieceId, isGhostMode, isDragging ? ($activePieceId ?? undefined) : undefined, collisionCount);
   $: if (isLoaded) requestRender();
 
   onMount(() => {
@@ -136,7 +147,8 @@
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(440, currTime);
       oscillator.frequency.exponentialRampToValueAtTime(880, currTime + 0.1);
-      gainNode.gain.setValueAtTime(1.2, currTime);
+      gainNode.gain.setValueAtTime(0.001, currTime);
+      gainNode.gain.linearRampToValueAtTime(0.5, currTime + 0.005);
       gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.1);
       oscillator.start();
       oscillator.stop(currTime + 0.1);
@@ -145,7 +157,8 @@
       oscillator.type = 'triangle';
       oscillator.frequency.setValueAtTime(120, currTime);
       oscillator.frequency.exponentialRampToValueAtTime(60, currTime + 0.15);
-      gainNode.gain.setValueAtTime(2.0, currTime);
+      gainNode.gain.setValueAtTime(0.001, currTime);
+      gainNode.gain.linearRampToValueAtTime(0.8, currTime + 0.005);
       gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.15);
       oscillator.start();
       oscillator.stop(currTime + 0.15);
@@ -155,17 +168,20 @@
         const g = audioCtx.createGain();
         o.connect(g);
         g.connect(audioCtx.destination);
-        o.frequency.setValueAtTime(freq, currTime + i * 0.1);
-        g.gain.setValueAtTime(1.0, currTime + i * 0.1);
-        g.gain.exponentialRampToValueAtTime(0.01, currTime + i * 0.1 + 0.3);
-        o.start(currTime + i * 0.1);
-        o.stop(currTime + i * 0.1 + 0.3);
+        const startTime = currTime + i * 0.1;
+        o.frequency.setValueAtTime(freq, startTime);
+        g.gain.setValueAtTime(0.001, startTime);
+        g.gain.linearRampToValueAtTime(0.2, startTime + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+        o.start(startTime);
+        o.stop(startTime + 0.3);
       });
     } else if (type === 'slide') {
        // Faint friction
        oscillator.type = 'sawtooth';
        oscillator.frequency.setValueAtTime(100, currTime);
-       gainNode.gain.setValueAtTime(0.4, currTime);
+       gainNode.gain.setValueAtTime(0.001, currTime);
+       gainNode.gain.linearRampToValueAtTime(0.2, currTime + 0.005);
        gainNode.gain.linearRampToValueAtTime(0, currTime + 0.05);
        oscillator.start();
        oscillator.stop(currTime + 0.05);
@@ -204,6 +220,7 @@
     }
     pieceGroups = {};
     pieceMeshes = [];
+    winOngoing = false;
 
     currentVoxelSize = data.voxel_size || 0.25;
     const assetPath = `${import.meta.env.BASE_URL}assets/${data.id}/`;
@@ -242,14 +259,13 @@
 
     await Promise.all(loadPromises);
     
-    // Set initial positions
-    updatePiecePositions(data.states["0"]);
+    updatePiecePositions(data.states["0"], true);
     frameCameraToPuzzle();
     updateVisuals($activePieceId, isGhostMode);
     isLoaded = true;
   }
 
-  function updatePiecePositions(state: Record<string, [number, number, number]>) {
+  function updatePiecePositions(state: Record<string, [number, number, number]>, silent = false) {
     if (!state) return;
     for (const pid in pieceGroups) {
       const group = pieceGroups[pid];
@@ -257,12 +273,16 @@
         if (!group.visible) {
             group.visible = true;
             // Pop in
-            gsap.fromTo(group.scale, { x: 0, y: 0, z: 0 }, { 
-              x: 1, y: 1, z: 1, 
-              duration: 0.5, 
-              ease: "back.out(1.7)",
-              onUpdate: requestRender
-            });
+            if (silent) {
+              group.scale.set(1, 1, 1);
+            } else {
+              gsap.fromTo(group.scale, { x: 0, y: 0, z: 0 }, { 
+                x: 1, y: 1, z: 1, 
+                duration: 0.5, 
+                ease: "back.out(1.7)",
+                onUpdate: requestRender
+              });
+            }
         }
         
         // Only update if NOT currently being dragged by user
@@ -273,26 +293,31 @@
           const dist = currentPos.distanceTo(new THREE.Vector3(pos[0] * currentVoxelSize, pos[1] * currentVoxelSize, pos[2] * currentVoxelSize));
 
           if (dist > 0.01) {
-              gsap.to(group.position, {
-                  x: pos[0] * currentVoxelSize,
-                  y: pos[1] * currentVoxelSize,
-                  z: pos[2] * currentVoxelSize,
-                  duration: 0.25, 
-                  overwrite: 'auto',
-                  onUpdate: requestRender
-              });
-              
-              // Move pop
-              gsap.fromTo(group.scale, 
-                  { x: 1.05, y: 1.05, z: 1.05 },
-                  { x: 1, y: 1, z: 1, duration: 0.3, ease: "power2.out", onUpdate: requestRender }
-              );
-              playSound('slide');
+              if (silent) {
+                group.position.set(pos[0] * currentVoxelSize, pos[1] * currentVoxelSize, pos[2] * currentVoxelSize);
+                group.scale.set(1, 1, 1);
+              } else {
+                gsap.to(group.position, {
+                    x: pos[0] * currentVoxelSize,
+                    y: pos[1] * currentVoxelSize,
+                    z: pos[2] * currentVoxelSize,
+                    duration: 0.25, 
+                    overwrite: 'auto',
+                    onUpdate: requestRender
+                });
+                
+                // Move pop
+                gsap.fromTo(group.scale, 
+                    { x: 1.05, y: 1.05, z: 1.05 },
+                    { x: 1, y: 1, z: 1, duration: 0.3, ease: "power2.out", onUpdate: requestRender }
+                );
+                playSound('slide');
+              }
           }
         }
       } else if (group.visible) {
         // "Snap-out" removal animation
-        playSound('pop');
+        if (!silent) playSound('pop');
         
         // Fly away logic: move towards camera/away from center
         const awayDir = group.position.clone().normalize().multiplyScalar(1.0);
@@ -341,11 +366,11 @@
     scene.add(axisGizmos);
   }
 
-  function updateVisuals(activeId: string | null, ghost: boolean, draggingPieceId?: string) {
+  function updateVisuals(activeId: string | null, ghost: boolean, draggingPieceId?: string, count: number = 0) {
     if (!pieceGroups) return;
     
     // Conditional transparency: if spacebar is down OR we've hit enough collisions
-    const effectiveGhost = ghost || collisionCount >= 5;
+    const effectiveGhost = ghost || count >= 5;
 
     for (const id in pieceGroups) {
       const isActive = id === activeId;
@@ -477,11 +502,13 @@
         raycaster.ray.intersectPlane(dragPlane, intersectPoint);
         dragOffset.copy(intersectPoint).sub(selectedPieceGroup.position);
         
-        collisionCount = 0;
+        if (intersectPoint) {} // dummy use if needed, but we used raycaster
+
+        // Only reset hit detection flags, NOT collisionCount (it persists until success or piece change)
         hitCounted = false;
         isColliding = false;
         // Initial visual update 
-        updateVisuals(pieceId, isGhostMode);
+        updateVisuals(pieceId, isGhostMode, undefined, collisionCount);
       }
     }
   }
@@ -539,16 +566,15 @@
               newPos.y += Math.cos(t * 1.1) * 0.005;
               newPos.z += Math.sin(t * 0.9) * 0.005;
               
-              if (!hitCounted && impactStrength > 0.5) {
+              if (!hitCounted && impactStrength > 0.4) {
                 collisionCount++;
                 hitCounted = true;
-                if (collisionCount === 5) {
-                  updateVisuals($activePieceId, isGhostMode);
-                }
+                // No need to call updateVisuals manually if it's reactive, 
+                // but let's do it to be safe for immediate feedback
+                updateVisuals($activePieceId, isGhostMode, $activePieceId ?? undefined, collisionCount);
               }
 
-              // Thud sound with a cooldown/probability
-              if (Math.random() > 0.8) playSound('thud'); 
+              if (Math.random() > 0.85) playSound('thud'); 
               isColliding = true;
           } else {
              hitCounted = false;
@@ -589,10 +615,9 @@
       }
       
       selectedPieceGroup = null;
-      collisionCount = 0;
       hitCounted = false;
       isColliding = false;
-      updateVisuals($activePieceId, isGhostMode);
+      updateVisuals($activePieceId, isGhostMode, undefined, collisionCount);
     }
   }
 
@@ -716,6 +741,9 @@
   }
 
   function triggerWin(pieceId: string, axis: 'x'|'y'|'z', delta: number) {
+    if (winOngoing) return;
+    winOngoing = true;
+    
     setTimeout(() => {
       isVictory.set(true);
       playSound('win');
