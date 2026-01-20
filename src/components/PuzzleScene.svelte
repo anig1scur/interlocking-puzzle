@@ -46,6 +46,8 @@
   let hitCounted = false;
   let isColliding = false;
   let winOngoing = false;
+  let lastMoveTime = 0;
+  const MOVE_COOLDOWN = 200; // ms between moves during drag
 
   // Audio
   let audioCtx: AudioContext;
@@ -526,30 +528,49 @@
       const targetPos = intersectPoint.sub(dragOffset);
       const diff = targetPos.clone().sub(dragStartPos);
 
-      // Axis Alignment & Locking
-      const absDiff = {
-        x: Math.abs(diff.x),
-        y: Math.abs(diff.y),
-        z: Math.abs(diff.z)
-      };
+      const components = [
+        { axis: 'x' as const, val: diff.x, abs: Math.abs(diff.x) },
+        { axis: 'y' as const, val: diff.y, abs: Math.abs(diff.y) },
+        { axis: 'z' as const, val: diff.z, abs: Math.abs(diff.z) }
+      ].sort((a, b) => b.abs - a.abs);
 
-      let bestAxis: 'x' | 'y' | 'z' = 'x';
-      if (absDiff.y > absDiff.x && absDiff.y > absDiff.z) bestAxis = 'y';
-      else if (absDiff.z > absDiff.x && absDiff.z > absDiff.y) bestAxis = 'z';
+      let bestAxis: 'x' | 'y' | 'z' = components[0].axis;
+      let isWin = false;
+      let canMove = false;
+      let foundValid = false;
+
+      const snapThreshold = 0.3 * currentVoxelSize;
+
+      for (const comp of components) {
+        if (comp.abs < snapThreshold) continue;
+        
+        const dir = Math.sign(comp.val);
+        const winMatch = !!$puzzleData?.win_transitions?.find(t => 
+          t.state_id === $currentStateId && 
+          t.piece_id === $activePieceId && 
+          t.axis === comp.axis && 
+          (dir > 0 ? t.direction < 0 : t.direction > 0)
+        );
+        
+        const logicMatch = !!tryLogicMove($puzzleData!, $currentStateId, $activePieceId, comp.axis, dir);
+        
+        if (winMatch || logicMatch) {
+          bestAxis = comp.axis;
+          isWin = winMatch;
+          canMove = true;
+          foundValid = true;
+          break;
+        }
+      }
+
+      if (!foundValid) {
+        bestAxis = components[0].axis;
+        canMove = false;
+        isWin = false;
+      }
 
       const rawDelta = diff[bestAxis];
       const snapSteps = Math.round(rawDelta / currentVoxelSize);
-      
-      // Physical feedback logic:
-      // We check if the 'next' step is available.
-      const dir = Math.sign(rawDelta);
-      const isWin = snapSteps !== 0 && !!$puzzleData?.win_transitions?.find(t => 
-          t.state_id === $currentStateId && 
-          t.piece_id === $activePieceId && 
-          t.axis === bestAxis && 
-          (snapSteps < 0 ? t.direction > 0 : t.direction < 0)
-      );
-      const canMove = snapSteps === 0 || isWin || !!tryLogicMove($puzzleData!, $currentStateId, $activePieceId, bestAxis, Math.sign(snapSteps));
 
       if (!canMove) {
           const visualDelta = Math.tanh(rawDelta * 3) * 0.1 * currentVoxelSize;
@@ -559,8 +580,6 @@
           // Add light vibration if trying to push hard
           const impactStrength = Math.abs(rawDelta) / currentVoxelSize;
           if (impactStrength > 0.3) {
-              // Smoother jitter using a time-based sine or noise is usually better, 
-              // but here we just reduce the amplitude and frequency of random vibration
               const t = Date.now() * 0.05;
               newPos.x += Math.sin(t) * 0.005;
               newPos.y += Math.cos(t * 1.1) * 0.005;
@@ -569,8 +588,6 @@
               if (!hitCounted && impactStrength > 0.4) {
                 collisionCount++;
                 hitCounted = true;
-                // No need to call updateVisuals manually if it's reactive, 
-                // but let's do it to be safe for immediate feedback
                 updateVisuals($activePieceId, isGhostMode, $activePieceId ?? undefined, collisionCount);
               }
 
@@ -583,14 +600,25 @@
           selectedPieceGroup.position.copy(newPos);
       } else {
           isColliding = false;
-          // Follow mouse up to 1 step
           if (Math.abs(snapSteps) >= 1) {
               attemptMove($activePieceId, bestAxis, Math.sign(snapSteps));
-          } else {
-              const newPos = dragStartPos.clone();
-              newPos[bestAxis] += rawDelta;
-              selectedPieceGroup.position.copy(newPos);
           }
+
+          const currentDiff = targetPos.clone().sub(dragStartPos);
+          const currentRawDelta = currentDiff[bestAxis];
+          const visualSnapLimit = 0.7 * currentVoxelSize;
+          const clampedDelta = Math.max(-visualSnapLimit, Math.min(visualSnapLimit, currentRawDelta));
+          
+          const newPos = dragStartPos.clone();
+          newPos[bestAxis] += clampedDelta;
+          
+          // Axis-specific visual offset for other axes (slight lag/follow)
+          if (bestAxis !== 'x') newPos.x += currentDiff.x * 0.2;
+          if (bestAxis !== 'y') newPos.y += currentDiff.y * 0.2;
+          if (bestAxis !== 'z') newPos.z += currentDiff.z * 0.2;
+
+          selectedPieceGroup.position.copy(newPos);
+          requestRender();
       }
     }
   }
@@ -710,6 +738,11 @@
   function attemptMove(pieceId: string, axis: 'x'|'y'|'z', delta: number, source = 'drag') {
     if (!$puzzleData) return;
     
+    if (source === 'drag') {
+      const now = Date.now();
+      if (now - lastMoveTime < MOVE_COOLDOWN) return;
+    }
+    
     const nextState = tryLogicMove($puzzleData, $currentStateId, pieceId, axis, delta);
     
     if (nextState) {
@@ -719,6 +752,7 @@
       
       if (source === 'drag' && selectedPieceGroup) {
          dragStartPos.copy(selectedPieceGroup.position);
+         lastMoveTime = Date.now();
          collisionCount = 0;
          hitCounted = false;
          updateVisuals(pieceId, isGhostMode);
