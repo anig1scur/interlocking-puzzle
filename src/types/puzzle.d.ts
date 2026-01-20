@@ -1,3 +1,10 @@
+export interface WinTransition {
+  state_id: string;
+  piece_id: string;
+  axis: 'x' | 'y' | 'z';
+  direction: number;
+}
+
 export interface Vector3 {
   x: number;
   y: number;
@@ -19,6 +26,7 @@ export interface PuzzleData {
   };
   transitions: [string, string][];
   goal_states?: string[];
+  win_transitions?: WinTransition[];
   level?: number;
 }
 

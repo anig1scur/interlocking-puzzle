@@ -261,5 +261,19 @@
     "3",
     "4"
   ],
+  "win_transitions": [
+    {
+      "state_id": "3",
+      "piece_id": "piece2",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "4",
+      "piece_id": "piece2",
+      "axis": "x",
+      "direction": -1
+    }
+  ],
   "voxel_size": 0.4
 }

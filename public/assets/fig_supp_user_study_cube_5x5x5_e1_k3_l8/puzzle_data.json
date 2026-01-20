@@ -362,5 +362,13 @@
   "goal_states": [
     "9"
   ],
+  "win_transitions": [
+    {
+      "state_id": "9",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    }
+  ],
   "voxel_size": 0.4
 }

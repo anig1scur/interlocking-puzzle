@@ -7109,5 +7109,655 @@
     "211",
     "213"
   ],
+  "win_transitions": [
+    {
+      "state_id": "20",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "20",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "24",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "24",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "25",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "25",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "29",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "29",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "31",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "34",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "35",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "40",
+      "piece_id": "piece3",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "41",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "42",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "44",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "45",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "45",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "49",
+      "piece_id": "piece3",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "50",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "50",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "53",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "58",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "59",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "60",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "64",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "67",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "68",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "70",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "71",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "72",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "73",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "75",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "77",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "80",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "81",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "82",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "83",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "83",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "84",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "84",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "86",
+      "piece_id": "piece3",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "88",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "89",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "90",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "91",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "93",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "93",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "95",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "96",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "96",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "98",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "98",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "99",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "100",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "100",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "102",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "105",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "106",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "107",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "107",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "111",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "112",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "113",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "114",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "114",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "115",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "115",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "117",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "118",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "120",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "122",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "123",
+      "piece_id": "piece3",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "125",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "126",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "129",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "131",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "132",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "138",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "139",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "140",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "141",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "142",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "143",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "143",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "144",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "145",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "146",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "156",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "157",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "158",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "161",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "163",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "164",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "164",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "171",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "174",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "180",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "181",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "182",
+      "piece_id": "piece3",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "185",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "188",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "193",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "194",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "196",
+      "piece_id": "piece3",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "208",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "210",
+      "piece_id": "piece3",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "211",
+      "piece_id": "piece2",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "213",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    }
+  ],
   "voxel_size": 0.28
 }

@@ -98,7 +98,7 @@
     </div>
 
     <!-- Leaderboard Section -->
-    <div class="bg-black/20 rounded-2xl p-6 mb-8 border border-white/5 text-left">
+    <div class="bg-black/20 rounded-2xl p-6 mb-8 border border-white/5 text-left ">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Leaderboard</h3>
         

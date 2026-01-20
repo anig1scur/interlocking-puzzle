@@ -1626,5 +1626,55 @@
     "31",
     "32"
   ],
+  "win_transitions": [
+    {
+      "state_id": "25",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "26",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "27",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "28",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "29",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "30",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "31",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "32",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    }
+  ],
   "voxel_size": 0.333333
 }

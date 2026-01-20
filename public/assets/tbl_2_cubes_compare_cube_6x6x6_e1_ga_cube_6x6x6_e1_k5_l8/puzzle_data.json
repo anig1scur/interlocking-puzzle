@@ -9445,5 +9445,679 @@
     "206",
     "211"
   ],
+  "win_transitions": [
+    {
+      "state_id": "15",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "16",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "17",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "18",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "21",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "22",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "24",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "25",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "28",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "29",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "31",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "32",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "34",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "35",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "38",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "39",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "41",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "42",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "44",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "45",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "48",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "49",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "51",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "52",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "54",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "55",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "58",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "59",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "61",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "62",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "64",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "65",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "69",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "70",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "73",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "74",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "75",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "76",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "80",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "81",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "85",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "87",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "88",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "90",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "91",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "94",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "95",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "98",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "99",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "100",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "101",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "102",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "103",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "104",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "105",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "108",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "109",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "110",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "111",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "113",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    },
+    {
+      "state_id": "114",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "115",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "117",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "118",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "119",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "124",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "125",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "133",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "134",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "135",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "136",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "137",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "138",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "139",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "140",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "141",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "144",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "145",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "146",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "147",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "148",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "149",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "150",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "157",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "158",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "159",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "160",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "161",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "162",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "168",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "169",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "173",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "174",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "177",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "178",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "179",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "180",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "181",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "182",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "183",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "189",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "190",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "191",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "192",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "197",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "198",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "199",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "203",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "204",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": -1
+    },
+    {
+      "state_id": "205",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "206",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    },
+    {
+      "state_id": "211",
+      "piece_id": "piece2",
+      "axis": "z",
+      "direction": 1
+    }
+  ],
   "voxel_size": 0.333333
 }

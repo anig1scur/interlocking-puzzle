@@ -519,5 +519,6 @@
   ],
   "level": 11,
   "goal_states": [],
+  "win_transitions": [],
   "voxel_size": 0.4
 }

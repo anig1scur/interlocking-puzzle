@@ -14,7 +14,7 @@
     moveCount, 
     isVictory 
   } from '../stores/gameStore';
-  import { calculateGoalStates, tryMove as tryLogicMove } from '../lib/puzzleLogic';
+  import { tryMove as tryLogicMove } from '../lib/puzzleLogic';
   import { PIECE_COLORS, createPieceMaterial, setupSceneLighting } from '../lib/visuals';
   import type { PuzzleData } from '../types/puzzle';
 
@@ -54,7 +54,6 @@
 
   $: if ($currentStateId && $puzzleData) {
     updatePiecePositions($puzzleData.states[$currentStateId]);
-    checkWinCondition();
   }
 
   $: updateVisuals($activePieceId, isGhostMode, isDragging ? ($activePieceId ?? undefined) : undefined);
@@ -463,7 +462,13 @@
       // Physical feedback logic:
       // We check if the 'next' step is available.
       const dir = Math.sign(rawDelta);
-      const canMove = snapSteps !== 0 ? !!tryLogicMove($puzzleData!, $currentStateId, $activePieceId, bestAxis, Math.sign(snapSteps)) : true;
+      const isWin = snapSteps !== 0 && !!$puzzleData?.win_transitions?.find(t => 
+          t.state_id === $currentStateId && 
+          t.piece_id === $activePieceId && 
+          t.axis === bestAxis && 
+          (snapSteps < 0 ? t.direction > 0 : t.direction < 0)
+      );
+      const canMove = snapSteps === 0 || isWin || !!tryLogicMove($puzzleData!, $currentStateId, $activePieceId, bestAxis, Math.sign(snapSteps));
 
       if (!canMove) {
           const visualDelta = Math.tanh(rawDelta * 3) * 0.1 * currentVoxelSize;
@@ -638,24 +643,60 @@
          hitCounted = false;
          updateVisuals(pieceId, isGhostMode);
       }
-    } else if (source === 'keyboard') {
-      playSound('fail');
+    } else {
+      
+      const winMove = $puzzleData.win_transitions?.find(t => 
+          t.state_id === $currentStateId && 
+          t.piece_id === pieceId && 
+          t.axis === axis && 
+          (delta < 0 ? t.direction > 0 : t.direction < 0)
+      );
+
+      if (winMove && !$isVictory) {
+          triggerWin(pieceId, axis, delta);
+      } else if (source === 'keyboard') {
+          playSound('fail');
+      }
     }
   }
 
-  function checkWinCondition() {
-    if (!$puzzleData) return;
-    const goals = calculateGoalStates($puzzleData);
-    if (goals.has($currentStateId) && !$isVictory) {
+  function triggerWin(pieceId: string, axis: 'x'|'y'|'z', delta: number) {
+    setTimeout(() => {
       isVictory.set(true);
       playSound('win');
       confetti({
-        particleCount: 150,
-        spread: 70,
+        particleCount: 60,
+        spread: 90,
         origin: { y: 0.6 }
       });
+    }, 1200);
+
+    const group = pieceGroups[pieceId];
+    if (group) {
+        // flying away
+        const flyDir = new THREE.Vector3();
+        flyDir[axis] = delta * 5 * currentVoxelSize;
+        
+        gsap.to(group.position, {
+            x: group.position.x + flyDir.x,
+            y: group.position.y + flyDir.y,
+            z: group.position.z + flyDir.z,
+            duration: 1.0,
+            opacity: 0,
+            ease: "power2.in",
+            onComplete: () => {
+                group.visible = false;
+            }
+        });
+        
+        gsap.to(group.scale, {
+            x: 0, y: 0, z: 0,
+            duration: 1.0,
+            ease: "power2.in"
+        });
     }
   }
+
   
   function onWindowResize() {
     if (camera && renderer) {

@@ -1145,5 +1145,139 @@
     "43",
     "44"
   ],
+  "win_transitions": [
+    {
+      "state_id": "20",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "21",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "24",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "25",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "26",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "27",
+      "piece_id": "piece1",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "28",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "29",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "30",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "31",
+      "piece_id": "piece1",
+      "axis": "y",
+      "direction": 1
+    },
+    {
+      "state_id": "33",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "34",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "35",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "36",
+      "piece_id": "piece2",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "37",
+      "piece_id": "piece2",
+      "axis": "x",
+      "direction": 1
+    },
+    {
+      "state_id": "38",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "39",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "40",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "41",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "42",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "43",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    },
+    {
+      "state_id": "44",
+      "piece_id": "piece1",
+      "axis": "z",
+      "direction": -1
+    }
+  ],
   "voxel_size": 0.333333
 }
