@@ -34,36 +34,38 @@
   function initScene() {
     if (!container) return;
     
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000); 
-    // Opacity handled by renderer alpha if needed, but here we want a specific bg for analysis usually
-    // Original CSS had background: rgba(0, 0, 0, 0.3);
-    
-    camera = new THREE.PerspectiveCamera(50, 1, 0.1, 10);
-    camera.position.set(2, 2, 2);
-    camera.lookAt(0, 0, 0);
+    if (!scene) {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000); 
+      
+      camera = new THREE.PerspectiveCamera(50, 1, 0.1, 10);
+      camera.position.set(2, 2, 2);
+      camera.lookAt(0, 0, 0);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(200, 200);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    container.appendChild(renderer.domElement);
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(200, 200);
+      renderer.setPixelRatio(window.devicePixelRatio);
 
-    setupSceneLighting(scene);
+      setupSceneLighting(scene);
+      animate();
+    }
 
-    // const grid = new THREE.GridHelper(2, 8, 0x333333, 0x222222);
-    // scene.add(grid);
-
-    animate();
+    if (container && !container.contains(renderer.domElement)) {
+      container.innerHTML = '';
+      container.appendChild(renderer.domElement);
+    }
   }
 
   function animate() {
     animationId = requestAnimationFrame(animate);
-    if (!$activePieceId) return;
+    if (!renderer || !scene || !camera) return;
     
-    if (pieceGroup) {
-      pieceGroup.rotation.y += 0.01;
+    if ($activePieceId) {
+      if (pieceGroup) {
+        pieceGroup.rotation.y += 0.01;
+      }
+      renderer.render(scene, camera);
     }
-    renderer.render(scene, camera);
   }
 
   async function updatePiece(id: string | null) {
@@ -75,13 +77,15 @@
     }
     currentPieceId = id;
     
-    // Safety check just in case init failed or isn't done
-    if (!scene) {
-      if(container) initScene();
-      if(!scene) return;
-    }
+    // Wait for DOM update if panel just appeared
+    await tick();
     
-    if (!$puzzleData) return;
+    // Safety check just in case init failed or isn't done
+    if (container) {
+      initScene();
+    }
+
+    if (!scene || !$puzzleData) return;
 
     if (pieceGroup) scene.remove(pieceGroup);
 
