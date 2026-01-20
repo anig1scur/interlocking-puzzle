@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, afterUpdate, onDestroy } from 'svelte';
+  import { onMount, afterUpdate, onDestroy, tick } from 'svelte';
   import * as THREE from 'three';
   import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
   import { puzzleData, activePieceId } from '../stores/gameStore';
@@ -15,7 +15,12 @@
   
 
   $: if ($activePieceId !== currentPieceId) {
-    updatePiece($activePieceId);
+    handlePieceChange($activePieceId);
+  }
+
+  async function handlePieceChange(id: string | null) {
+    await tick();
+    updatePiece(id);
   }
 
   onMount(() => {
