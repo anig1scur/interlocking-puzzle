@@ -23,6 +23,7 @@
   let camera: THREE.PerspectiveCamera;
   let renderer: THREE.WebGLRenderer;
   let controls: OrbitControls;
+  let needsRender = false;
   
   let pieceGroups: Record<string, THREE.Group> = {};
   let pieceMeshes: THREE.Object3D[] = [];
@@ -57,6 +58,7 @@
   }
 
   $: updateVisuals($activePieceId, isGhostMode, isDragging ? ($activePieceId ?? undefined) : undefined);
+  $: if (isLoaded) requestRender();
 
   onMount(() => {
     initScene();
@@ -70,7 +72,20 @@
       window.removeEventListener('resize', onWindowResize);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
+      if (controls) controls.removeEventListener('change', requestRender);
       renderer.dispose();
+      // Dispose materials and geometries
+      pieceMeshes.forEach(m => {
+        const mesh = m as THREE.Mesh;
+        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            (mesh.material as THREE.Material[]).forEach((mat: THREE.Material) => mat.dispose());
+          } else {
+            (mesh.material as THREE.Material).dispose();
+          }
+        }
+      });
     };
   });
 
@@ -88,12 +103,18 @@
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.addEventListener('change', requestRender);
 
     // Lights
     setupSceneLighting(scene);
 
     // initGizmos();
+    requestRender();
     animate();
+  }
+
+  function requestRender() {
+    needsRender = true;
   }
 
   function initAudio() {
@@ -156,7 +177,30 @@
     
     // Cleanup old meshes
     for (const id in pieceGroups) {
-      scene.remove(pieceGroups[id]);
+      const group = pieceGroups[id];
+      group.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          mesh.geometry.dispose();
+          if (Array.isArray(mesh.material)) {
+            (mesh.material as THREE.Material[]).forEach((m: THREE.Material) => m.dispose());
+          } else {
+            (mesh.material as THREE.Material).dispose();
+          }
+          mesh.children.forEach(c => {
+            const line = c as THREE.LineSegments;
+            if (line.geometry) line.geometry.dispose();
+            if (line.material) {
+              if (Array.isArray(line.material)) {
+                (line.material as THREE.Material[]).forEach((m: THREE.Material) => m.dispose());
+              } else {
+                (line.material as THREE.Material).dispose();
+              }
+            }
+          });
+        }
+      });
+      scene.remove(group);
     }
     pieceGroups = {};
     pieceMeshes = [];
@@ -213,7 +257,12 @@
         if (!group.visible) {
             group.visible = true;
             // Pop in
-            gsap.fromTo(group.scale, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1, duration: 0.5, ease: "back.out(1.7)" });
+            gsap.fromTo(group.scale, { x: 0, y: 0, z: 0 }, { 
+              x: 1, y: 1, z: 1, 
+              duration: 0.5, 
+              ease: "back.out(1.7)",
+              onUpdate: requestRender
+            });
         }
         
         // Only update if NOT currently being dragged by user
@@ -229,13 +278,14 @@
                   y: pos[1] * currentVoxelSize,
                   z: pos[2] * currentVoxelSize,
                   duration: 0.25, 
-                  overwrite: 'auto'
+                  overwrite: 'auto',
+                  onUpdate: requestRender
               });
               
               // Move pop
               gsap.fromTo(group.scale, 
                   { x: 1.05, y: 1.05, z: 1.05 },
-                  { x: 1, y: 1, z: 1, duration: 0.3, ease: "power2.out" }
+                  { x: 1, y: 1, z: 1, duration: 0.3, ease: "power2.out", onUpdate: requestRender }
               );
               playSound('slide');
           }
@@ -252,16 +302,19 @@
             y: group.position.y + awayDir.y,
             z: group.position.z + awayDir.z,
             duration: 0.6,
-            ease: "circ.out"
+            ease: "circ.out",
+            onUpdate: requestRender
         });
         
         gsap.to(group.scale, {
             x: 0, y: 0, z: 0,
             duration: 0.6,
             ease: "power2.in",
+            onUpdate: requestRender,
             onComplete: () => {
                 group.visible = false;
                 group.scale.set(1, 1, 1); // Reset for next time
+                requestRender();
             }
         });
       }
@@ -384,6 +437,7 @@
         camera.lookAt(center);
         controls.target.copy(center);
         controls.update();
+        requestRender();
       }
     });
   }
@@ -529,7 +583,8 @@
               y: pos[1] * currentVoxelSize,
               z: pos[2] * currentVoxelSize,
               duration: 0.2,
-              ease: "power2.out"
+              ease: "power2.out",
+              onUpdate: requestRender
           });
       }
       
@@ -729,13 +784,20 @@
       onUpdate: () => {
         camera.lookAt(0, 0, 0);
         controls.update();
+        requestRender();
       }
     });
   }
 
   function animate() {
     animationFrameId = requestAnimationFrame(animate);
-    controls.update();
+    
+    // Auto-update controls if damping is enabled
+    if (controls && controls.enableDamping) {
+      if (controls.update()) {
+        requestRender();
+      }
+    }
     
     // Pulse effect & Gizmos
     if ($activePieceId && pieceGroups[$activePieceId]) {
@@ -754,16 +816,26 @@
         if ((child as THREE.Mesh).isMesh) {
            const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
            if (mat.emissiveIntensity !== undefined) {
-             mat.emissive.set(0xf2f2f2);
-             mat.emissiveIntensity = (isColliding ? 0.6 : 0.1) + pulse * 0.2;
+             const targetIntensity = (isColliding ? 0.6 : 0.1) + pulse * 0.2;
+             if (Math.abs(mat.emissiveIntensity - targetIntensity) > 0.01) {
+                mat.emissive.set(0xf2f2f2);
+                mat.emissiveIntensity = targetIntensity;
+                requestRender();
+             }
            }
         }
       });
     } else {
-        if (axisGizmos) axisGizmos.visible = false;
+        if (axisGizmos && axisGizmos.visible) {
+          axisGizmos.visible = false;
+          requestRender();
+        }
     }
 
-    renderer.render(scene, camera);
+    if (needsRender) {
+      renderer.render(scene, camera);
+      needsRender = false;
+    }
   }
 </script>
 

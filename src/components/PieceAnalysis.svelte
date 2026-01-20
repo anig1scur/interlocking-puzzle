@@ -9,9 +9,10 @@
   let scene: THREE.Scene;
   let camera: THREE.PerspectiveCamera;
   let renderer: THREE.WebGLRenderer;
-  let animationId: number;
+  let animationId: number | null = null;
   let currentPieceId: string | null = null;
   let pieceGroup: THREE.Group | null = null;
+  let isSceneReady = false;
   
 
   $: if ($activePieceId !== currentPieceId) {
@@ -24,12 +25,30 @@
   }
 
   onMount(() => {
-    initScene();
     return () => {
-      cancelAnimationFrame(animationId);
-      if (renderer) renderer.dispose();
+      stopAnimate();
+      if (renderer) {
+        renderer.dispose();
+        renderer.forceContextLoss();
+      }
+      disposePiece();
     };
   });
+
+  function disposePiece() {
+    if (pieceGroup) {
+      pieceGroup.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          mesh.geometry.dispose();
+          if (Array.isArray(mesh.material)) mesh.material.forEach(m => m.dispose());
+          else mesh.material.dispose();
+        }
+      });
+      if (scene) scene.remove(pieceGroup);
+      pieceGroup = null;
+    }
+  }
 
   function initScene() {
     if (!container) return;
@@ -47,7 +66,7 @@
       renderer.setPixelRatio(window.devicePixelRatio);
 
       setupSceneLighting(scene);
-      animate();
+      isSceneReady = true;
     }
 
     if (container && !container.contains(renderer.domElement)) {
@@ -58,21 +77,32 @@
 
   function animate() {
     animationId = requestAnimationFrame(animate);
-    if (!renderer || !scene || !camera) return;
+    if (!renderer || !scene || !camera || !isSceneReady) return;
     
-    if ($activePieceId) {
-      if (pieceGroup) {
-        pieceGroup.rotation.y += 0.01;
-      }
+    if (pieceGroup) {
+      pieceGroup.rotation.y += 0.01;
       renderer.render(scene, camera);
+    }
+  }
+
+  function startAnimate() {
+    if (animationId === null) {
+      animate();
+    }
+  }
+
+  function stopAnimate() {
+    if (animationId !== null) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
     }
   }
 
   async function updatePiece(id: string | null) {
     if (!id) {
        currentPieceId = null;
-       if(pieceGroup && scene) scene.remove(pieceGroup);
-       pieceGroup = null;
+       disposePiece();
+       stopAnimate();
        return;
     }
     currentPieceId = id;
@@ -119,6 +149,7 @@
       object.position.set(0, 0.2, 0);
       scene.add(object);
       pieceGroup = object;
+      startAnimate();
     } catch (e) {
       console.warn("Failed to load piece for analysis", e);
     }
