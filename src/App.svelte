@@ -6,6 +6,10 @@
   import PieceAnalysis from './components/PieceAnalysis.svelte';
   import WinScreen from './components/WinScreen.svelte';
   import LeaderboardPanel from './components/LeaderboardPanel.svelte';
+  import { inject } from '@vercel/analytics';
+
+
+  inject();
 
   let puzzleScene: PuzzleScene;
   let showLeaderboard = false;
@@ -18,7 +22,6 @@
 </script>
 
 <main class="relative w-full h-full overflow-hidden text-white selection:bg-white/20 selection:text-white select-none">
-  
   <PuzzleScene bind:this={puzzleScene} />
 
   <!-- Top Left UI -->
