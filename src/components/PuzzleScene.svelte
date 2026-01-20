@@ -43,6 +43,7 @@
   let isGhostMode = false;
   let collisionCount = 0;
   let hitCounted = false;
+  let isColliding = false;
 
   // Audio
   let audioCtx: AudioContext;
@@ -115,7 +116,7 @@
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(440, currTime);
       oscillator.frequency.exponentialRampToValueAtTime(880, currTime + 0.1);
-      gainNode.gain.setValueAtTime(0.1, currTime);
+      gainNode.gain.setValueAtTime(0.6, currTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.1);
       oscillator.start();
       oscillator.stop(currTime + 0.1);
@@ -124,7 +125,7 @@
       oscillator.type = 'triangle';
       oscillator.frequency.setValueAtTime(120, currTime);
       oscillator.frequency.exponentialRampToValueAtTime(60, currTime + 0.15);
-      gainNode.gain.setValueAtTime(0.3, currTime);
+      gainNode.gain.setValueAtTime(1.0, currTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.15);
       oscillator.start();
       oscillator.stop(currTime + 0.15);
@@ -135,7 +136,7 @@
         o.connect(g);
         g.connect(audioCtx.destination);
         o.frequency.setValueAtTime(freq, currTime + i * 0.1);
-        g.gain.setValueAtTime(0.05, currTime + i * 0.1);
+        g.gain.setValueAtTime(0.4, currTime + i * 0.1);
         g.gain.exponentialRampToValueAtTime(0.01, currTime + i * 0.1 + 0.3);
         o.start(currTime + i * 0.1);
         o.stop(currTime + i * 0.1 + 0.3);
@@ -144,7 +145,7 @@
        // Faint friction
        oscillator.type = 'sawtooth';
        oscillator.frequency.setValueAtTime(100, currTime);
-       gainNode.gain.setValueAtTime(0.01, currTime);
+       gainNode.gain.setValueAtTime(0.1, currTime);
        gainNode.gain.linearRampToValueAtTime(0, currTime + 0.05);
        oscillator.start();
        oscillator.stop(currTime + 0.05);
@@ -302,7 +303,9 @@
           const mesh = child as THREE.Mesh;
           const mat = mesh.material as THREE.MeshPhongMaterial;
 
-          const targetTransparent = effectiveGhost && !isActive;
+          const isBeingDragged = id === draggingPieceId;
+          // Apply extra transparency only if NOT in ghost mode (spacebar)
+          const targetTransparent = effectiveGhost ? !isActive : isBeingDragged;
           
           if (mat.transparent !== targetTransparent) {
              mat.transparent = targetTransparent;
@@ -310,9 +313,9 @@
           }
 
           if (targetTransparent) {
-             mat.opacity = 0.25; // More subtle X-Ray
-             mat.depthWrite = false;
-             mat.side = THREE.DoubleSide;
+             mat.opacity = (isBeingDragged && !effectiveGhost) ? 0.8 : 0.25; 
+             mat.depthWrite = !effectiveGhost; 
+             mat.side = effectiveGhost ? THREE.DoubleSide : THREE.FrontSide;
           } else {
              mat.opacity = 1.0;
              mat.depthWrite = true;
@@ -327,6 +330,11 @@
             mat.emissive.set(0xf2f2f2);
             mat.emissiveIntensity = 0.2;
 
+            // Prevent Z-fighting during collision/overlap
+            mat.polygonOffset = true;
+            mat.polygonOffsetFactor = -1;
+            mat.polygonOffsetUnits = -4;
+
             if (lineMat) {
               lineMat.opacity = 1.0;
               lineMat.color.set(0x00d2ff);
@@ -336,6 +344,7 @@
             // Normal highlighting
             mat.emissive.set(0x000000);
             mat.emissiveIntensity = 0;
+            mat.polygonOffset = false;
 
             if (lineMat) {
               lineMat.color.set(0xffffff);
@@ -417,6 +426,7 @@
         
         collisionCount = 0;
         hitCounted = false;
+        isColliding = false;
         // Initial visual update 
         updateVisuals(pieceId, isGhostMode);
       }
@@ -456,17 +466,19 @@
       const canMove = snapSteps !== 0 ? !!tryLogicMove($puzzleData!, $currentStateId, $activePieceId, bestAxis, Math.sign(snapSteps)) : true;
 
       if (!canMove) {
-          // "Wiggle" feedback: move slightly and spring back/resist
-          const visualDelta = Math.tanh(rawDelta * 2) * 0.15 * currentVoxelSize;
+          const visualDelta = Math.tanh(rawDelta * 3) * 0.1 * currentVoxelSize;
           const newPos = dragStartPos.clone();
           newPos[bestAxis] += visualDelta;
           
           // Add light vibration if trying to push hard
           const impactStrength = Math.abs(rawDelta) / currentVoxelSize;
           if (impactStrength > 0.3) {
-              newPos.x += (Math.random() - 0.5) * 0.01;
-              newPos.y += (Math.random() - 0.5) * 0.01;
-              newPos.z += (Math.random() - 0.5) * 0.01;
+              // Smoother jitter using a time-based sine or noise is usually better, 
+              // but here we just reduce the amplitude and frequency of random vibration
+              const t = Date.now() * 0.05;
+              newPos.x += Math.sin(t) * 0.005;
+              newPos.y += Math.cos(t * 1.1) * 0.005;
+              newPos.z += Math.sin(t * 0.9) * 0.005;
               
               if (!hitCounted && impactStrength > 0.5) {
                 collisionCount++;
@@ -476,12 +488,16 @@
                 }
               }
 
-              if (Math.random() > 0.9) playSound('fail'); // Thud sound
+              // Thud sound with a cooldown/probability
+              if (Math.random() > 0.8) playSound('thud'); 
+              isColliding = true;
           } else {
              hitCounted = false;
+             isColliding = false;
           }
           selectedPieceGroup.position.copy(newPos);
       } else {
+          isColliding = false;
           // Follow mouse up to 1 step
           if (Math.abs(snapSteps) >= 1) {
               attemptMove($activePieceId, bestAxis, Math.sign(snapSteps));
@@ -515,6 +531,7 @@
       selectedPieceGroup = null;
       collisionCount = 0;
       hitCounted = false;
+      isColliding = false;
       updateVisuals($activePieceId, isGhostMode);
     }
   }
@@ -696,7 +713,8 @@
         if ((child as THREE.Mesh).isMesh) {
            const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
            if (mat.emissiveIntensity !== undefined) {
-             mat.emissiveIntensity = 0.2 + pulse * 0.4;
+             mat.emissive.set(0xf2f2f2);
+             mat.emissiveIntensity = (isColliding ? 0.4 : 0.2) + pulse * 0.4;
            }
         }
       });
