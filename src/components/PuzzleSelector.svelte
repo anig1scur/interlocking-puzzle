@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { puzzleList, currentPuzzleId, puzzleData, resetGame } from '../stores/gameStore';
-
-  let loading = false;
+  import { puzzleList, currentPuzzleId, puzzleData, resetGame, selectPuzzle, isLoading } from '../stores/gameStore';
 
   async function loadPuzzles() {
     try {
@@ -23,9 +21,9 @@
               selectPuzzle(puzzleIdFromUrl);
           } else {
               // Fallback if invalid ID
-               if (!$currentPuzzleId && data.length > 0) {
-                 selectPuzzle(data[0].id);
-               }
+              if (!$currentPuzzleId && data.length > 0) {
+                selectPuzzle(data[0].id);
+              }
           }
       } else if (!$currentPuzzleId && data.length > 0) {
         selectPuzzle(data[0].id);
@@ -36,25 +34,6 @@
       }
     } catch (e) {
       console.error("Failed to load puzzle list", e);
-    }
-  }
-
-  async function selectPuzzle(id: string) {
-    if (id === $currentPuzzleId) return;
-    
-    loading = true;
-    currentPuzzleId.set(id);
-    resetGame();
-    
-    try {
-      const res = await fetch(`${import.meta.env.BASE_URL}assets/${id}/puzzle_data.json`);
-      const data = await res.json();
-      data.id = id; // ensure ID is attached
-      puzzleData.set(data);
-    } catch (e) {
-      console.error(`Failed to load puzzle ${id}`, e);
-    } finally {
-      loading = false;
     }
   }
 
@@ -88,7 +67,7 @@
     <img 
       src="{import.meta.env.BASE_URL}logo.png" 
       alt="Interactive Puzzle Logo" 
-      class="w-16 h-16 object-contain grayscale opacity-60 hover:opacity-100 transition-opacity"
+      class="w-16 h-16 object-contain grayscale transition-opacity"
     />
   </div>
 

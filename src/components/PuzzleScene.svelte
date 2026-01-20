@@ -29,6 +29,7 @@
   
   let animationFrameId: number;
   let currentVoxelSize = 0.25;
+  let isLoaded = false;
   
   
   // Dragging interaction
@@ -40,6 +41,8 @@
   let isDragging = false;
   let selectedPieceGroup: THREE.Group | null = null;
   let isGhostMode = false;
+  let collisionCount = 0;
+  let hitCounted = false;
 
   // Audio
   let audioCtx: AudioContext;
@@ -121,7 +124,7 @@
       oscillator.type = 'triangle';
       oscillator.frequency.setValueAtTime(120, currTime);
       oscillator.frequency.exponentialRampToValueAtTime(60, currTime + 0.15);
-      gainNode.gain.setValueAtTime(0.15, currTime);
+      gainNode.gain.setValueAtTime(0.3, currTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.15);
       oscillator.start();
       oscillator.stop(currTime + 0.15);
@@ -288,8 +291,8 @@
   function updateVisuals(activeId: string | null, ghost: boolean, draggingPieceId?: string) {
     if (!pieceGroups) return;
     
-    // Auto-transparency: if we are dragging OR spacebar is down
-    const effectiveGhost = ghost || !!draggingPieceId;
+    // Conditional transparency: if spacebar is down OR we've hit enough collisions
+    const effectiveGhost = ghost || collisionCount >= 5;
 
     for (const id in pieceGroups) {
       const isActive = id === activeId;
@@ -408,8 +411,10 @@
         raycaster.ray.intersectPlane(dragPlane, intersectPoint);
         dragOffset.copy(intersectPoint).sub(selectedPieceGroup.position);
         
-        // Initial visual update for drag start (transparency)
-        updateVisuals(pieceId, true);
+        collisionCount = 0;
+        hitCounted = false;
+        // Initial visual update 
+        updateVisuals(pieceId, isGhostMode);
       }
     }
   }
@@ -453,11 +458,23 @@
           newPos[bestAxis] += visualDelta;
           
           // Add light vibration if trying to push hard
-          if (Math.abs(rawDelta) > 0.3 * currentVoxelSize) {
+          const impactStrength = Math.abs(rawDelta) / currentVoxelSize;
+          if (impactStrength > 0.3) {
               newPos.x += (Math.random() - 0.5) * 0.01;
               newPos.y += (Math.random() - 0.5) * 0.01;
               newPos.z += (Math.random() - 0.5) * 0.01;
+              
+              if (!hitCounted && impactStrength > 0.5) {
+                collisionCount++;
+                hitCounted = true;
+                if (collisionCount === 5) {
+                  updateVisuals($activePieceId, isGhostMode);
+                }
+              }
+
               if (Math.random() > 0.9) playSound('fail'); // Thud sound
+          } else {
+             hitCounted = false;
           }
           selectedPieceGroup.position.copy(newPos);
       } else {
@@ -492,6 +509,8 @@
       }
       
       selectedPieceGroup = null;
+      collisionCount = 0;
+      hitCounted = false;
       updateVisuals($activePieceId, isGhostMode);
     }
   }
@@ -594,6 +613,9 @@
       
       if (source === 'drag' && selectedPieceGroup) {
          dragStartPos.copy(selectedPieceGroup.position);
+         collisionCount = 0;
+         hitCounted = false;
+         updateVisuals(pieceId, isGhostMode);
       }
     } else if (source === 'keyboard') {
       playSound('fail');

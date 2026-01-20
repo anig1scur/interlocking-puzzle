@@ -1,9 +1,5 @@
 <script lang="ts">
-  import { isVictory } from '../stores/gameStore';
-  
-  function reload() {
-    location.reload();
-  }
+  import { isVictory, nextPuzzle } from '../stores/gameStore';
 </script>
 
 {#if $isVictory}
@@ -15,13 +11,13 @@
       <div class="h-1 w-12 bg-white/40 mx-auto mt-4 rounded-full"></div>
     </div>
     
-    <p class="text-lg mb-10 text-white/50 font-medium">The interlocking sequence is complete.</p>
+    <p class="text-lg mb-10 text-white/50 font-medium">The interlocking level is complete.</p>
     
     <button 
       class="bg-white text-black font-black py-4 px-12 rounded-full transform transition-all hover:scale-105 hover:bg-zinc-200 active:scale-95 shadow-xl uppercase tracking-widest text-xs"
-      on:click={reload}
+      on:click={nextPuzzle}
     >
-      Restart Sequence
+      Next Puzzle
     </button>
   </div>
 </div>
