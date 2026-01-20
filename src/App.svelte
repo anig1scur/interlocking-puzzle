@@ -8,7 +8,6 @@
   import LeaderboardPanel from './components/LeaderboardPanel.svelte';
   import { inject } from '@vercel/analytics';
 
-
   inject();
 
   let puzzleScene: PuzzleScene;

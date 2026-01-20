@@ -116,7 +116,7 @@
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(440, currTime);
       oscillator.frequency.exponentialRampToValueAtTime(880, currTime + 0.1);
-      gainNode.gain.setValueAtTime(0.6, currTime);
+      gainNode.gain.setValueAtTime(1.2, currTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.1);
       oscillator.start();
       oscillator.stop(currTime + 0.1);
@@ -125,7 +125,7 @@
       oscillator.type = 'triangle';
       oscillator.frequency.setValueAtTime(120, currTime);
       oscillator.frequency.exponentialRampToValueAtTime(60, currTime + 0.15);
-      gainNode.gain.setValueAtTime(1.0, currTime);
+      gainNode.gain.setValueAtTime(2.0, currTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.15);
       oscillator.start();
       oscillator.stop(currTime + 0.15);
@@ -136,7 +136,7 @@
         o.connect(g);
         g.connect(audioCtx.destination);
         o.frequency.setValueAtTime(freq, currTime + i * 0.1);
-        g.gain.setValueAtTime(0.4, currTime + i * 0.1);
+        g.gain.setValueAtTime(1.0, currTime + i * 0.1);
         g.gain.exponentialRampToValueAtTime(0.01, currTime + i * 0.1 + 0.3);
         o.start(currTime + i * 0.1);
         o.stop(currTime + i * 0.1 + 0.3);
@@ -145,7 +145,7 @@
        // Faint friction
        oscillator.type = 'sawtooth';
        oscillator.frequency.setValueAtTime(100, currTime);
-       gainNode.gain.setValueAtTime(0.1, currTime);
+       gainNode.gain.setValueAtTime(0.4, currTime);
        gainNode.gain.linearRampToValueAtTime(0, currTime + 0.05);
        oscillator.start();
        oscillator.stop(currTime + 0.05);

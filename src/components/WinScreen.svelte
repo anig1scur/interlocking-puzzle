@@ -106,9 +106,9 @@
           <div class="relative flex items-center group">
             <input 
               bind:value={name}
-              placeholder="YOUR NAME"
+              placeholder="your nickname"
               disabled={!isEditing && isSubmitted}
-              class="bg-white/5 border border-white/10 rounded-lg px-3 py-[1px] text-[10px] text-white focus:outline-none focus:border-white/30 w-32 transition-all disabled:opacity-50 disabled:cursor-default"
+              class="bg-white/5 border border-white/10 rounded-lg px-3 py-[1px] text-[12px] text-white focus:outline-none focus:border-white/30 w-32 transition-all disabled:opacity-50 disabled:cursor-default"
               maxlength="20"
               on:dblclick={() => isEditing = true}
             />
