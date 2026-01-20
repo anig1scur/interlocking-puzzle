@@ -35,7 +35,7 @@
     // Original CSS had background: rgba(0, 0, 0, 0.3);
     
     camera = new THREE.PerspectiveCamera(50, 1, 0.1, 10);
-    camera.position.set(1.5, 1.5, 1.5);
+    camera.position.set(2, 2, 2);
     camera.lookAt(0, 0, 0);
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -48,8 +48,8 @@
     dirLight.position.set(5, 5, 5);
     scene.add(dirLight);
 
-    const grid = new THREE.GridHelper(2, 8, 0x333333, 0x222222);
-    scene.add(grid);
+    // const grid = new THREE.GridHelper(2, 8, 0x333333, 0x222222);
+    // scene.add(grid);
 
     animate();
   }

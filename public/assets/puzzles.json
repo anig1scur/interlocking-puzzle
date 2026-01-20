@@ -1,13 +1,13 @@
 [
   {
-    "id": "fig_13_results_smooth_angry_bird_7x6x8_e1_k5_l10",
-    "name": "fig_13_results_smooth/Angry_bird_7x6x8_E1_K5_L10",
-    "level": 10
-  },
-  {
     "id": "fig_13_results_smooth_moai_8x6x9_k3_l7",
     "name": "fig_13_results_smooth/Moai_8x6x9_K3_L7",
     "level": 7
+  },
+    {
+    "id": "fig_13_results_smooth_angry_bird_7x6x8_e1_k5_l10",
+    "name": "fig_13_results_smooth/Angry_bird_7x6x8_E1_K5_L10",
+    "level": 10
   },
   {
     "id": "fig_13_results_smooth_owl_5x5x5_k3_l7",

@@ -19,7 +19,7 @@
   
   <PuzzleScene bind:this={puzzleScene} />
 
-  <div class="absolute top-5 left-5 right-5 pointer-events-none flex flex-col gap-4 items-start max-w-fit z-10">
+  <div class="absolute top-5 left-5 pointer-events-none flex flex-col gap-4 items-start max-w-fit z-10">
     <div class="pointer-events-auto z-50 relative">
       <PuzzleSelector />
     </div>
@@ -27,7 +27,9 @@
     <div class="pointer-events-auto">
       <StatsPanel />
     </div>
+  </div>
 
+  <div class="absolute top-5 right-5 pointer-events-none flex flex-col gap-4 items-end max-w-fit z-10">
     <div class="pointer-events-auto">
       <ViewControls on:view={handleViewChange} />
     </div>
