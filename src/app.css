@@ -13,6 +13,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --frozen-lake: #70d6ff;
+    --rose-kiss: #ff70a6;
+    --tangerine-dream: #ff9770;
+    --royal-gold: #ffd670;
+    --lime-cream: #e9ff70;
 }
 
 body {

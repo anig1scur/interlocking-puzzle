@@ -3,6 +3,7 @@
   import * as THREE from 'three';
   import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
   import { puzzleData, activePieceId } from '../stores/gameStore';
+  import { PIECE_COLORS, createPieceMaterial, setupSceneLighting } from '../lib/visuals';
 
   let container: HTMLDivElement;
   let scene: THREE.Scene;
@@ -12,7 +13,6 @@
   let currentPieceId: string | null = null;
   let pieceGroup: THREE.Group | null = null;
   
-  const PIECE_COLORS = [0xE74C3C, 0x3498DB, 0x2ECC71, 0xF1C40F, 0xF3BF91, 0x9B59B6, 0x1ABC9C];
 
   $: if ($activePieceId !== currentPieceId) {
     updatePiece($activePieceId);
@@ -43,10 +43,7 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     container.appendChild(renderer.domElement);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    dirLight.position.set(5, 5, 5);
-    scene.add(dirLight);
+    setupSceneLighting(scene);
 
     // const grid = new THREE.GridHelper(2, 8, 0x333333, 0x222222);
     // scene.add(grid);
@@ -97,11 +94,7 @@
       object.traverse((child: THREE.Object3D) => {
         if ((child as THREE.Mesh).isMesh) {
           const mesh = child as THREE.Mesh;
-          mesh.material = new THREE.MeshPhongMaterial({
-            color: color,
-            specular: 0x111111,
-            shininess: 30
-          });
+          mesh.material = createPieceMaterial(color);
 
           // Highlight outline for analysis view
           const edges = new THREE.EdgesGeometry(mesh.geometry);

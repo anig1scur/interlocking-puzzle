@@ -15,6 +15,7 @@
     isVictory 
   } from '../stores/gameStore';
   import { calculateGoalStates, tryMove as tryLogicMove } from '../lib/puzzleLogic';
+  import { PIECE_COLORS, createPieceMaterial, setupSceneLighting } from '../lib/visuals';
   import type { PuzzleData } from '../types/puzzle';
 
   let container: HTMLDivElement;
@@ -28,7 +29,7 @@
   
   let animationFrameId: number;
   let currentVoxelSize = 0.25;
-  const PIECE_COLORS = [0xE74C3C, 0x3498DB, 0x2ECC71, 0xF1C40F, 0xE67E22, 0x9B59B6, 0x1ABC9C];
+  
   
   // Dragging interaction
   let raycaster = new THREE.Raycaster();
@@ -86,16 +87,7 @@
     controls.enableDamping = true;
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
-    scene.add(ambientLight);
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    dirLight.position.set(10, 20, 10);
-    scene.add(dirLight);
-
-    const spotLight = new THREE.SpotLight(0xffffff, 0.5);
-    spotLight.position.set(-10, 5, -10);
-    scene.add(spotLight);
+    setupSceneLighting(scene);
 
     // initGizmos();
     animate();
@@ -177,11 +169,7 @@
           object.traverse((child: THREE.Object3D) => {
             if ((child as THREE.Mesh).isMesh) {
               const mesh = child as THREE.Mesh;
-              mesh.material = new THREE.MeshPhongMaterial({
-                color: PIECE_COLORS[index % PIECE_COLORS.length],
-                specular: 0x111111,
-                shininess: 30
-              });
+              mesh.material = createPieceMaterial(PIECE_COLORS[index % PIECE_COLORS.length]);
 
               // Edges for outline
               const edges = new THREE.EdgesGeometry(mesh.geometry);
