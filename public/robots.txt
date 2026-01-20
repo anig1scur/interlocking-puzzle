@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://interlocking-puzzle.aeriszhu.com/sitemap.xml
