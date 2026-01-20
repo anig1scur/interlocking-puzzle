@@ -58,8 +58,8 @@
   }
 </script>
 
-<div class="glass-panel rounded-2xl p-6 shadow-2xl w-[340px] max-h-[85vh] flex flex-col relative">
-  <div class="mb-5 flex items-center justify-between">
+<div class="glass-panel rounded-2xl p-2 md:p-6 shadow-2xl w-[240px] md:w-[340px] max-h-[85vh] flex flex-col relative border-none md:border md:border-white/5 select-none">
+  <div class="mb-5 hidden md:flex items-center justify-between">
     <h1 class="text-xl font-bold tracking-tight text-white/90">
       Interlocking
       <span class="block text-3xl font-black text-white">PUZZLES</span>
@@ -74,13 +74,13 @@
   <!-- Current Selection Display -->
   <div class="relative w-full">
     <button 
-      class="w-full text-left bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-4 transition-all group overflow-hidden relative"
+      class="w-full text-left bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-2 md:p-4 transition-all group overflow-hidden relative"
       on:click={toggleOpen}
     >
-      <div class="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mb-3">Collection</div>
-      <div class="flex items-center gap-4">
+      <div class="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mb-1 md:mb-3">Collection</div>
+      <div class="flex items-center gap-2 md:gap-4">
         <!-- Preview Image -->
-        <div class="w-20 h-16 bg-black rounded-xl overflow-hidden shrink-0 border border-white/5 shadow-inner flex items-center justify-center">
+        <div class="w-12 h-10 md:w-20 md:h-16 bg-black rounded-xl overflow-hidden shrink-0 border border-white/5 shadow-inner flex items-center justify-center">
           {#if $currentPuzzleId}
             <img 
                src="{import.meta.env.BASE_URL}previews/{$currentPuzzleId}.png" 
@@ -94,7 +94,7 @@
         </div>
         
         <div class="overflow-hidden flex-1">
-          <div class="font-bold text-white truncate group-hover:text-white transition-colors text-lg">
+          <div class="font-bold text-white truncate group-hover:text-white transition-colors text-base md:text-lg">
             {$puzzleList.find(p => p.id === $currentPuzzleId)?.name.split('/').pop() || 'Select...'}
           </div>
            {#if $currentPuzzleId}
@@ -157,7 +157,14 @@
 
   <!-- Close dropdown when clicking outside -->
   {#if isOpen}
-    <div class="fixed inset-0 z-40 bg-black/40 backdrop-blur-[4px]" on:click={toggleOpen}></div>
+    <div 
+      class="fixed inset-0 z-40 bg-black/40 backdrop-blur-[4px]" 
+      on:click={toggleOpen}
+      on:keydown={(e) => e.key === 'Escape' && toggleOpen()}
+      role="button"
+      tabindex="-1"
+      aria-label="Close dropdown"
+    ></div>
   {/if}
 </div>
 

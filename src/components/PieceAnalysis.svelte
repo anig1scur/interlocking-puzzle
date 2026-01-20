@@ -116,11 +116,12 @@
   }
 </script>
 
-<div class="glass-panel rounded-2xl p-4 shadow-xl mt-4 w-[220px]"
-     class:hidden={!$activePieceId}>
+{#if $activePieceId}
+<div class="glass-panel rounded-2xl p-4 shadow-xl mt-4 w-[220px] hidden md:block select-none">
   <div class="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] text-center mb-4">
     Geometry Insights
   </div>
   <div bind:this={container} class="w-[188px] h-[188px] rounded-xl overflow-hidden bg-black/40 border border-white/5 mx-auto shadow-inner">
   </div>
 </div>
+{/if}

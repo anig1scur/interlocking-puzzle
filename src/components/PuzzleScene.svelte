@@ -382,6 +382,10 @@
 
   // Interaction Handlers
   function onPointerDown(event: MouseEvent) {
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    
     if (event.button !== 0 || !$activePieceId) return;
 
     // Calculate mouse position
