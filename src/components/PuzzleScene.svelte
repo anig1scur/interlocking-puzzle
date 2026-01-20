@@ -544,6 +544,10 @@
       for (const comp of components) {
         if (comp.abs < snapThreshold) continue;
         
+        const others = components.filter(c => c.axis !== comp.axis);
+        const otherMag = Math.sqrt(others[0].val ** 2 + others[1].val ** 2);
+        if (comp.abs <= otherMag) continue; 
+
         const dir = Math.sign(comp.val);
         const winMatch = !!$puzzleData?.win_transitions?.find(t => 
           t.state_id === $currentStateId && 

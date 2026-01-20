@@ -13,4 +13,4 @@ https://github.com/user-attachments/assets/7abe5533-eece-4efe-b1aa-4cedaf963c33
 ---
 
 
-![screenshot](screenshot.png)
+![screenshot](./static/screenshot.png)
