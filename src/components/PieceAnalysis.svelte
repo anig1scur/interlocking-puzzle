@@ -116,11 +116,11 @@
   }
 </script>
 
-<div class="glass-panel backdrop-blur-md bg-puzzle-glass border border-white/10 rounded-xl p-3 shadow-lg mt-4 w-[220px]"
+<div class="glass-panel rounded-2xl p-4 shadow-xl mt-4 w-[220px]"
      class:hidden={!$activePieceId}>
-  <div class="text-xs text-puzzle-cyan uppercase tracking-wider font-bold text-center mb-2">
-    Selected Piece Geometry
+  <div class="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] text-center mb-4">
+    Geometry Insights
   </div>
-  <div bind:this={container} class="w-[200px] h-[200px] rounded-lg overflow-hidden bg-black/30 border border-white/10 mx-auto shadow-inner">
+  <div bind:this={container} class="w-[188px] h-[188px] rounded-xl overflow-hidden bg-black/40 border border-white/5 mx-auto shadow-inner">
   </div>
 </div>

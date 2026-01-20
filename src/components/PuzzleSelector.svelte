@@ -8,6 +8,8 @@
     try {
       const res = await fetch(`${import.meta.env.BASE_URL}assets/puzzles.json`);
       const data = await res.json();
+      // Sort by level ascending
+      data.sort((a: any, b: any) => (a.level || 0) - (b.level || 0));
       puzzleList.set(data);
       
       // Check for deep link or existing selection
@@ -77,44 +79,56 @@
   }
 </script>
 
-<div class="glass-panel backdrop-blur-md bg-puzzle-glass border border-white/10 rounded-xl p-5 shadow-lg w-[320px] max-h-[80vh] flex flex-col relative">
-  <h1 class="text-2xl font-bold bg-gradient-to-br from-puzzle-cyan to-puzzle-blue bg-clip-text text-transparent mb-3">
-    Interlocking Puzzle
-  </h1>
+<div class="glass-panel rounded-2xl p-6 shadow-2xl w-[340px] max-h-[85vh] flex flex-col relative">
+  <div class="mb-5 flex items-center justify-between">
+    <h1 class="text-xl font-bold tracking-tight text-white/90">
+      Interlocking
+      <span class="block text-3xl font-black text-white">PUZZLES</span>
+    </h1>
+    <img 
+      src="{import.meta.env.BASE_URL}logo.png" 
+      alt="Interactive Puzzle Logo" 
+      class="w-16 h-16 object-contain grayscale opacity-60 hover:opacity-100 transition-opacity"
+    />
+  </div>
 
   <!-- Current Selection Display -->
   <div class="relative w-full">
     <button 
-      class="w-full text-left bg-white/5 hover:bg-white/10 border border-white/20 rounded-xl p-3 transition-all group"
+      class="w-full text-left bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-4 transition-all group overflow-hidden relative"
       on:click={toggleOpen}
     >
-      <div class="text-xs text-puzzle-cyan uppercase tracking-wider mb-2 font-semibold">Current Puzzle</div>
-      <div class="flex items-center gap-3">
+      <div class="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mb-3">Collection</div>
+      <div class="flex items-center gap-4">
         <!-- Preview Image -->
-        <div class="w-16 h-12 bg-black/50 rounded-lg overflow-hidden shrink-0 border border-white/10 relative">
+        <div class="w-20 h-16 bg-black rounded-xl overflow-hidden shrink-0 border border-white/5 shadow-inner flex items-center justify-center">
           {#if $currentPuzzleId}
             <img 
                src="{import.meta.env.BASE_URL}previews/{$currentPuzzleId}.png" 
                alt="Preview" 
-               class="w-full h-full object-cover"
+               class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity grayscale"
                on:error={(e) => e.currentTarget.style.display = 'none'}
             />
+          {:else}
+            <div class="text-white/10 text-xs">NO PREVIEW</div>
           {/if}
         </div>
         
-        <div class="overflow-hidden">
-          <div class="font-medium text-white truncate group-hover:text-puzzle-cyan transition-colors">
-            {$puzzleList.find(p => p.id === $currentPuzzleId)?.name.split('/').pop() || 'Select Puzzle'}
+        <div class="overflow-hidden flex-1">
+          <div class="font-bold text-white truncate group-hover:text-white transition-colors text-lg">
+            {$puzzleList.find(p => p.id === $currentPuzzleId)?.name.split('/').pop() || 'Select...'}
           </div>
            {#if $currentPuzzleId}
-             <div class="text-xs text-white/50">
-               Level {$puzzleList.find(p => p.id === $currentPuzzleId)?.level || '?'}
+             <div class="flex items-center gap-2 mt-0.5">
+               <span class="px-1.5 py-0.5 rounded-md bg-white/10 text-white text-[10px] font-black border border-white/20">
+                 LV. {$puzzleList.find(p => p.id === $currentPuzzleId)?.level || '?'}
+               </span>
              </div>
            {/if}
         </div>
         
-        <div class="ml-auto text-white/50">
-           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform {isOpen ? 'rotate-180' : ''} transition-transform" viewBox="0 0 20 20" fill="currentColor">
+        <div class="text-white/20 group-hover:text-white/60 transition-colors">
+           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform {isOpen ? 'rotate-180' : ''} transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
         </div>
@@ -123,42 +137,48 @@
 
     <!-- Custom Dropdown -->
     {#if isOpen}
-      <div class="absolute top-full left-0 right-0 mt-2 bg-[#1a1c25]/95 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl z-50 max-h-[65vh] overflow-y-auto custom-scrollbar flex flex-col gap-1 p-2">
+      <div class="absolute top-[calc(100%+12px)] left-0 right-0 bg-black/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-50 max-h-[60vh] overflow-y-auto custom-scrollbar flex flex-col p-2 gap-1 animate-in fade-in zoom-in-95 duration-200">
          {#each $puzzleList as p}
             <button
-              class="flex items-center gap-3 w-full min-h-12 p-2 rounded-lg text-left transition-colors whitespace-nowrap overflow-hidden
-                     {p.id === $currentPuzzleId ? 'bg-puzzle-cyan/20 border border-puzzle-cyan/30' : 'hover:bg-white/10 border border-transparent'}"
+              class="flex items-center gap-4 w-full p-2.5 rounded-xl text-left transition-all
+                     {p.id === $currentPuzzleId 
+                       ? 'bg-white/10 border border-white/20' 
+                       : 'hover:bg-white/5 border border-transparent'}"
               on:click={() => selectAndClose(p.id)}
             >
-               <div class="w-10 h-8 bg-black/50 rounded overflow-hidden shrink-0 border border-white/10">
+               <div class="w-12 h-9 bg-black rounded-lg overflow-hidden shrink-0 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
                   <img 
                      src="{import.meta.env.BASE_URL}previews/{p.id}.png" 
                      alt="" 
-                     class="w-full h-full object-cover"
+                     class="w-full h-full object-cover opacity-60"
                      loading="lazy"
                      on:error={(e) => e.currentTarget.style.display = 'none'}
                   />
                </div>
                
-               <div class="overflow-hidden">
-                 <div class="text-sm font-medium text-gray-200 truncate">
+               <div class="overflow-hidden flex-1">
+                 <div class="text-sm font-bold {p.id === $currentPuzzleId ? 'text-white' : 'text-white/70'} truncate">
                    {p.name.split('/').pop()}
                  </div>
                  {#if p.level}
-                   <div class="text-[12px] text-gray-500">
+                   <div class="text-[9px] font-black text-white/50 uppercase tracking-widest mt-0.5">
                      Level {p.level}
                    </div>
                  {/if}
                </div>
+
+               {#if p.id === $currentPuzzleId}
+                 <div class="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
+               {/if}
             </button>
          {/each}
       </div>
     {/if}
   </div>
 
-  <!-- Close dropdown when clicking outside (simple overlay implementation) -->
+  <!-- Close dropdown when clicking outside -->
   {#if isOpen}
-    <div class="fixed inset-0 z-40 bg-transparent" on:click={toggleOpen}></div>
+    <div class="fixed inset-0 z-40 bg-black/40 backdrop-blur-[4px]" on:click={toggleOpen}></div>
   {/if}
 </div>
 

@@ -8,14 +8,20 @@
 
 {#if $isVictory}
 <div class="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
-  <div class="bg-puzzle-cyan/10 backdrop-blur-xl border-2 border-puzzle-cyan rounded-3xl p-10 text-center animate-fadeIn pointer-events-auto shadow-[0_0_50px_rgba(0,210,255,0.2)]">
-    <h2 class="text-5xl font-bold text-puzzle-cyan mb-4 tracking-wider drop-shadow-lg">SOLVED!</h2>
-    <p class="text-xl mb-8 text-white/90">You have successfully disassembled the puzzle.</p>
+  <div class="bg-white/5 backdrop-blur-3xl border border-white/20 rounded-[40px] p-16 text-center animate-fadeIn pointer-events-auto shadow-[0_40px_100px_rgba(0,0,0,0.8)] max-w-lg">
+    <div class="mb-6">
+      <div class="text-[12px] font-black text-white/20 uppercase tracking-[0.5em] mb-4">Achievement</div>
+      <h2 class="text-6xl font-black text-white mb-2 tracking-tighter">SOLVED</h2>
+      <div class="h-1 w-12 bg-white/40 mx-auto mt-4 rounded-full"></div>
+    </div>
+    
+    <p class="text-lg mb-10 text-white/50 font-medium">The interlocking sequence is complete.</p>
+    
     <button 
-      class="bg-puzzle-blue hover:bg-puzzle-cyan text-white font-bold py-3 px-8 rounded-lg transform transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+      class="bg-white text-black font-black py-4 px-12 rounded-full transform transition-all hover:scale-105 hover:bg-zinc-200 active:scale-95 shadow-xl uppercase tracking-widest text-xs"
       on:click={reload}
     >
-      Reset Puzzle
+      Restart Sequence
     </button>
   </div>
 </div>

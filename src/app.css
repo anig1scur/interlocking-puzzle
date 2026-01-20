@@ -1,23 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  /* Strictly Monochrome Palette */
+    --color-black: #000000;
+    --color-zinc-950: #09090b;
+    --color-zinc-900: #18181b;
+    --color-zinc-800: #27272a;
+    --color-zinc-700: #3f3f46;
+    --color-zinc-400: #a1a1aa;
+    --color-white: #ffffff;
+  
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
   font-weight: 400;
+  letter-spacing: -0.01em;
 
   color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #1a1a1a;
+  color: rgba(255, 255, 255, 0.9);
+    background-color: var(--color-black);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --frozen-lake: #70d6ff;
-    --rose-kiss: #ff70a6;
-    --tangerine-dream: #ff9770;
-    --royal-gold: #ffd670;
-    --lime-cream: #e9ff70;
+/* Puzzle Piece Palette - Grayscale */
+  --frozen-lake: #e4e4e7;
+  --rose-kiss: #a1a1aa;
+  --tangerine-dream: #52525b;
+  --royal-gold: #d4d4d8;
+  --lime-cream: #71717a;
 }
 
 body {
@@ -27,6 +38,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow: hidden;
+  background: radial-gradient(circle at center, #18181b 0%, #000000 100%);
 }
 
 #app {
@@ -36,9 +48,29 @@ body {
 }
 
 @theme {
-  --color-puzzle-bg: #1a1a1a;
-  --color-puzzle-glass: rgba(255, 255, 255, 0.05);
-  --color-puzzle-blue: #3a7bd5;
-  --color-puzzle-cyan: #00d2ff;
-  --color-puzzle-highlight: #67e8f9;
+  --color-puzzle-bg: var(--color-black);
+    --color-puzzle-glass: rgba(18, 18, 21, 0.75);
+    --color-puzzle-blue: var(--color-white);
+    --color-puzzle-cyan: var(--color-white);
+    --color-puzzle-highlight: var(--color-zinc-400);
+  }
+  
+  /* Glassmorphism enhancements */
+  .glass-panel {
+    background: var(--color-puzzle-glass);
+    backdrop-filter: blur(20px) saturate(100%);
+    -webkit-backdrop-filter: blur(20px) saturate(100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  }
+  
+  .glass-panel:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 1);
+  }
+  
+  /* Transitions */
+  * {
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
+
