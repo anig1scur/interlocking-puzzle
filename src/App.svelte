@@ -64,31 +64,22 @@
 
   <!-- Bottom Instructions - Hidden on Mobile -->
   <div class="absolute bottom-10 left-0 right-0 pointer-events-none hidden md:flex justify-center z-10 select-none animate-in slide-in-from-bottom-12 fade-in duration-1000 delay-300">
-    <div class="flex items-center gap-10 bg-black/40 backdrop-blur-3xl px-10 py-3 rounded-full border border-white/5 shadow-2xl">
-      <div class="flex flex-col items-center">
-        <span class="text-[8px] font-black text-white/20 uppercase tracking-[0.3em] mb-1">Navigation</span>
-        <span class="text-[10px] font-bold text-white/50 tracking-tight">Drag to Orbit</span>
+    <div class="flex items-center gap-6 bg-black/20 backdrop-blur-xl px-6 py-1.5 rounded-full border border-white/5 shadow-2xl opacity-40 hover:opacity-100 transition-opacity text-[10px] text-white/40 font-medium tracking-tight">
+      <div class="flex items-center gap-2 border-r border-white/5 pr-6 last:border-0 last:pr-0">
+        <span class="text-white/30 uppercase tracking-widest text-[8px]">View</span>
+        <span class="text-white/70 font-mono text-[9px]">Drag • WASD • R</span>
       </div>
-      
-      <div class="w-px h-6 bg-white/5"></div>
-
-      <div class="flex flex-col items-center">
-        <span class="text-[8px] font-black text-white/20 uppercase tracking-[0.3em] mb-1">Interaction</span>
-        <span class="text-[10px] font-bold text-white/50 tracking-tight">Double Click to Select</span>
+      <div class="flex items-center gap-2 border-r border-white/5 pr-6 last:border-0 last:pr-0">
+        <span class="text-white/30 uppercase tracking-widest text-[8px]">Piece</span>
+        <span class="text-white/70 font-mono text-[9px]">DblClk • Tab • Esc</span>
       </div>
-
-      <div class="w-px h-6 bg-white/5"></div>
-
-      <div class="flex flex-col items-center">
-        <span class="text-[8px] font-black text-white/20 uppercase tracking-[0.3em] mb-1">Manipulation</span>
-        <span class="text-[10px] font-bold text-white/50 tracking-tight">Drag Piece or Arrow | WS Keys</span> 
+      <div class="flex items-center gap-2 border-r border-white/5 pr-6 last:border-0 last:pr-0">
+        <span class="text-white/30 uppercase tracking-widest text-[8px]">Move</span>
+        <span class="text-white/70 font-mono text-[9px]">Drag • Arrows • IJKLUO</span>
       </div>
-
-      <div class="w-px h-6 bg-white/5"></div>
-
-      <div class="flex flex-col items-center">
-        <span class="text-[8px] font-black text-white/20 uppercase tracking-[0.3em] mb-1">Commands</span>
-        <span class="text-[10px] font-bold text-white/50 tracking-tight">Space: Ghost | R: Reset</span>
+      <div class="flex items-center gap-2 border-r border-white/5 pr-6 last:border-0 last:pr-0">
+        <span class="text-white/30 uppercase tracking-widest text-[8px]">Ghost</span>
+        <span class="text-white/70 font-mono text-[9px]">Space</span>
       </div>
     </div>
   </div>
