@@ -845,6 +845,19 @@
     const now = Date.now();
     if (now - lastMoveTime < MOVE_COOLDOWN) return;
 
+    const winMove = $puzzleData.win_transitions?.some(
+      (t) =>
+        t.state_id === $currentStateId &&
+        t.piece_id === pieceId &&
+        t.axis === axis &&
+        Math.sign(delta) === Math.sign(t.direction),
+    );
+
+    if (winMove && !$isVictory) {
+      triggerWin($currentStateId, axis, delta);
+      return;
+    }
+
     const nextState = tryLogicMove($puzzleData, $currentStateId, pieceId, axis, delta);
 
     if (nextState) {
@@ -884,42 +897,30 @@
           }
         }, 250);
       }
-    } else {
-      const winMove = $puzzleData.win_transitions?.some(
-        (t) =>
-          t.state_id === $currentStateId &&
-          t.piece_id === pieceId &&
-          t.axis === axis &&
-          Math.sign(delta) === Math.sign(t.direction),
-      );
+    } else if (source === 'keyboard') {
+      playSound('fail');
 
-      if (winMove && !$isVictory) {
-        triggerWin($currentStateId, axis, delta);
-      } else if (source === 'keyboard') {
-        playSound('fail');
+      isColliding = true;
+      collisionCount++;
+      updateVisuals(pieceId, isGhostMode, undefined, collisionCount);
 
-        isColliding = true;
-        collisionCount++;
-        updateVisuals(pieceId, isGhostMode, undefined, collisionCount);
+      const group = pieceGroups[pieceId];
+      if (group) {
+        const shakeDir = new THREE.Vector3();
+        shakeDir[axis] = delta * 0.05 * currentVoxelSize;
 
-        const group = pieceGroups[pieceId];
-        if (group) {
-          const shakeDir = new THREE.Vector3();
-          shakeDir[axis] = delta * 0.05 * currentVoxelSize;
-
-          gsap.to(group.position, {
-            x: group.position.x + shakeDir.x,
-            y: group.position.y + shakeDir.y,
-            z: group.position.z + shakeDir.z,
-            duration: 0.05,
-            yoyo: true,
-            repeat: 1,
-            onComplete: () => {
-              isColliding = false;
-              updateVisuals(pieceId, isGhostMode, undefined, collisionCount);
-            },
-          });
-        }
+        gsap.to(group.position, {
+          x: group.position.x + shakeDir.x,
+          y: group.position.y + shakeDir.y,
+          z: group.position.z + shakeDir.z,
+          duration: 0.05,
+          yoyo: true,
+          repeat: 1,
+          onComplete: () => {
+            isColliding = false;
+            updateVisuals(pieceId, isGhostMode, undefined, collisionCount);
+          },
+        });
       }
     }
   }
