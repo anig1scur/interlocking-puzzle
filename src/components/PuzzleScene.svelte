@@ -424,7 +424,7 @@
     scene.add(axisGizmos);
   }
 
-  function updateVisuals(activeId: string | null, ghost: boolean, draggingPieceId?: string, count: number = 0) {
+  function updateVisuals(activeId: string | null, ghost: boolean, draggingPieceId?: string, count: number = 0, linkedPieceIds: string[] = []) {
     if (!pieceGroups) return;
 
     // Conditional transparency: if spacebar is down OR we've hit enough collisions
@@ -432,13 +432,14 @@
 
     for (const id in pieceGroups) {
       const isActive = id === activeId;
+      const isLinked = linkedPieceIds.includes(id);
 
       pieceGroups[id].traverse((child) => {
         if ((child as THREE.Mesh).isMesh) {
           const mesh = child as THREE.Mesh;
           const mat = mesh.material as THREE.MeshPhongMaterial;
 
-          const isBeingDragged = id === draggingPieceId;
+          const isBeingDragged = id === draggingPieceId || isLinked;
           // Apply extra transparency only if NOT in ghost mode (spacebar)
           const targetTransparent = effectiveGhost ? !isActive : isBeingDragged;
 
@@ -472,13 +473,21 @@
 
             if (lineMat) {
               lineMat.opacity = 1.0;
-              lineMat.color.set(0x00d2ff);
+              lineMat.color.set(isLinked ? 0xffcc00 : 0x00d2ff);
+              lineMat.transparent = false;
+            }
+          } else if (isLinked) {
+            mat.emissive.set(0x443300);
+            mat.emissiveIntensity = 0.3;
+            if (lineMat) {
+              lineMat.opacity = 1.0;
+              lineMat.color.set(0xffcc00); 
               lineMat.transparent = false;
             }
           } else {
             // Normal highlighting
-            // mat.emissive.set(0x000000);
-            // mat.emissiveIntensity = 0;
+            mat.emissive.set(0x000000);
+            mat.emissiveIntensity = 0;
             mat.polygonOffset = false;
 
             if (lineMat) {
@@ -621,6 +630,24 @@
           isWin = winMatch;
           canMove = true;
           foundValid = true;
+
+          // Identify linked pieces for UI guidance
+          let linkedIds: string[] = [];
+          if (logicMatch) {
+            const nextStateId = tryLogicMove($puzzleData!, $currentStateId, $activePieceId, comp.axis, dir);
+            if (nextStateId) {
+              const nextState = $puzzleData!.states[nextStateId];
+              const currState = $puzzleData!.states[$currentStateId];
+              linkedIds = Object.keys(nextState).filter(pid => {
+                if (pid === $activePieceId) return false;
+                return nextState[pid][0] !== currState[pid][0] ||
+                       nextState[pid][1] !== currState[pid][1] ||
+                       nextState[pid][2] !== currState[pid][2];
+              });
+            }
+          }
+          updateVisuals($activePieceId, isGhostMode, $activePieceId, collisionCount, linkedIds);
+
           break;
         }
       }
@@ -870,7 +897,19 @@
       }
 
       // Sync visual feedback for "moving" state
-      updateVisuals(pieceId, isGhostMode, pieceId, collisionCount);
+      const nextStateData = $puzzleData.states[nextState];
+      const currState = $puzzleData.states[$currentStateId];
+      let linkedIds: string[] = [];
+      if (nextStateData && currState) {
+        linkedIds = Object.keys(nextStateData).filter(pid => {
+          if (pid === pieceId) return false;
+          return nextStateData[pid][0] !== currState[pid][0] ||
+                 nextStateData[pid][1] !== currState[pid][1] ||
+                 nextStateData[pid][2] !== currState[pid][2];
+        });
+      }
+      
+      updateVisuals(pieceId, isGhostMode, pieceId, collisionCount, linkedIds);
 
       // For keyboard moves, restore opaque state after animation duration
       if (source === 'keyboard') {

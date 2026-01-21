@@ -34,36 +34,20 @@ export function tryMove(
   delta: number
 ): string | null {
   const currentState = puzzleData.states[currentStateId];
-  if (!currentState) return null;
+  if (!currentState || !currentState[pieceId]) return null;
 
-  const proposedPositions = JSON.parse(JSON.stringify(currentState));
-  if (!proposedPositions[pieceId]) return null;
+  const neighbors = puzzleData.transitions
+    .filter(t => t[0] === currentStateId || t[1] === currentStateId)
+    .map(t => (t[0] === currentStateId ? t[1] : t[0]));
 
-  proposedPositions[pieceId][axis === 'x' ? 0 : axis === 'y' ? 1 : 2] += delta;
+  const axisIdx = axis === 'x' ? 0 : axis === 'y' ? 1 : 2;
+  const targetVal = currentState[pieceId][axisIdx] + delta;
 
-  // Find if any existing state matches this proposed configuration
-  const nextStateId = Object.keys(puzzleData.states).find(id => {
+  // Find a neighbor where the piece has moved to the target position
+  const nextStateId = neighbors.find(id => {
     const state = puzzleData.states[id];
-    const stateKeys = Object.keys(state);
-    const proposedKeys = Object.keys(proposedPositions);
-
-    if (stateKeys.length !== proposedKeys.length) return false;
-
-    return stateKeys.every(pid => {
-      return proposedPositions[pid] &&
-        state[pid][0] === proposedPositions[pid][0] &&
-        state[pid][1] === proposedPositions[pid][1] &&
-        state[pid][2] === proposedPositions[pid][2];
-    });
+    return state && state[pieceId] && state[pieceId][axisIdx] === targetVal;
   });
 
-  if (!nextStateId) return null;
-
-  // Check if there is a direct transition
-  const isValidTransition = puzzleData.transitions.some(t =>
-    (t[0] === currentStateId && t[1] === nextStateId) ||
-    (t[1] === currentStateId && t[0] === nextStateId)
-  );
-
-  return isValidTransition ? nextStateId : null;
+  return nextStateId || null;
 }
