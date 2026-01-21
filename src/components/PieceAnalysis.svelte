@@ -98,6 +98,9 @@
     }
   }
 
+
+  const geometryCache = new Map<string, THREE.Object3D>();
+
   async function updatePiece(id: string | null) {
     if (!id) {
        currentPieceId = null;
@@ -107,10 +110,8 @@
     }
     currentPieceId = id;
     
-    // Wait for DOM update if panel just appeared
     await tick();
     
-    // Safety check just in case init failed or isn't done
     if (container) {
       initScene();
     }
@@ -119,8 +120,8 @@
 
     if (pieceGroup) scene.remove(pieceGroup);
 
-    const assetPath = `${import.meta.env.BASE_URL}assets/${$puzzleData.id}/`;
-    const loader = new OBJLoader();
+    const puzzleId = $puzzleData.id;
+    const cacheKey = `${puzzleId}_${id}`;
     
     // Find index for color
     const ids = Object.keys($puzzleData.states["0"]);
@@ -128,7 +129,18 @@
     const color = PIECE_COLORS[index % PIECE_COLORS.length];
 
     try {
-      const object = await loader.loadAsync(`${assetPath}${id}.obj`);
+      let object: THREE.Object3D;
+
+      if (geometryCache.has(cacheKey)) {
+        const cached = geometryCache.get(cacheKey)!;
+        object = cached.clone();
+      } else {
+        const assetPath = `${import.meta.env.BASE_URL}assets/${puzzleId}/`;
+        const loader = new OBJLoader();
+        object = await loader.loadAsync(`${assetPath}${id}.obj`);
+        
+        geometryCache.set(cacheKey, object.clone());
+      }
       
       object.traverse((child: THREE.Object3D) => {
         if ((child as THREE.Mesh).isMesh) {
@@ -148,7 +160,7 @@
 
       object.position.set(0, 0.2, 0);
       scene.add(object);
-      pieceGroup = object;
+      pieceGroup = object as THREE.Group;
       startAnimate();
     } catch (e) {
       console.warn("Failed to load piece for analysis", e);
