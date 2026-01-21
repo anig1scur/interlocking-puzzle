@@ -338,7 +338,6 @@
           }
         }
       } else if (group.visible) {
-        // "Snap-out" removal animation
         if (!silent) playSound('pop');
 
         // Fly away logic: move towards camera/away from center
@@ -353,16 +352,30 @@
           onUpdate: requestRender,
         });
 
-        gsap.to(group.scale, {
-          x: 0,
-          y: 0,
-          z: 0,
+        const fadeObj = {opacity: 1};
+        gsap.to(fadeObj, {
+          opacity: 0,
           duration: 0.6,
           ease: 'power2.in',
-          onUpdate: requestRender,
+          onUpdate: () => {
+            group.traverse((child) => {
+              if ((child as THREE.Mesh).isMesh) {
+                const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
+                mat.transparent = true;
+                mat.opacity = fadeObj.opacity;
+              }
+            });
+            requestRender();
+          },
           onComplete: () => {
             group.visible = false;
-            group.scale.set(1, 1, 1); // Reset for next time
+            group.traverse((child) => {
+              if ((child as THREE.Mesh).isMesh) {
+                const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
+                mat.opacity = 1.0;
+                mat.transparent = false;
+              }
+            });
             requestRender();
           },
         });
@@ -927,19 +940,34 @@
         y: group.position.y + flyDir.y,
         z: group.position.z + flyDir.z,
         duration: 1.0,
-        opacity: 0,
-        ease: 'power2.in',
-        onComplete: () => {
-          group.visible = false;
-        },
       });
 
-      gsap.to(group.scale, {
-        x: 0,
-        y: 0,
-        z: 0,
+      const fadeObj = {opacity: 1};
+      gsap.to(fadeObj, {
+        opacity: 0,
         duration: 1.0,
         ease: 'power2.in',
+        onUpdate: () => {
+          group.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
+              mat.transparent = true;
+              mat.opacity = fadeObj.opacity;
+            }
+          });
+          requestRender();
+        },
+        onComplete: () => {
+          group.visible = false;
+          // Reset for potential reuse in the same session without reload
+          group.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
+              mat.opacity = 1.0;
+              mat.transparent = false;
+            }
+          });
+        },
       });
     }
   }
