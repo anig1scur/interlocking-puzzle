@@ -761,7 +761,12 @@
           activePieceId.set('piece1' in pieceGroups ? 'piece1' : pieceIds[0]);
         } else {
           const currentIndex = pieceIds.indexOf($activePieceId);
-          const nextIndex = (currentIndex + 1) % pieceIds.length;
+          let nextIndex;
+          if (event.shiftKey) {
+            nextIndex = (currentIndex - 1 + pieceIds.length) % pieceIds.length;
+          } else {
+            nextIndex = (currentIndex + 1) % pieceIds.length;
+          }
           activePieceId.set(pieceIds[nextIndex]);
         }
       }
