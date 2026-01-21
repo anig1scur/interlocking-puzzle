@@ -770,6 +770,8 @@
       return;
     }
 
+    if (event.repeat) return; 
+
     if (key === 'r') {
       controls.reset();
       return;
@@ -875,10 +877,8 @@
   function attemptMove(pieceId: string, axis: 'x' | 'y' | 'z', delta: number, source = 'drag') {
     if (!$puzzleData) return;
 
-    if (source === 'drag') {
-      const now = Date.now();
-      if (now - lastMoveTime < MOVE_COOLDOWN) return;
-    }
+    const now = Date.now();
+    if (now - lastMoveTime < MOVE_COOLDOWN) return;
 
     const nextState = tryLogicMove($puzzleData, $currentStateId, pieceId, axis, delta);
 
@@ -1079,23 +1079,17 @@
       if (keysPressed.has('w') || keysPressed.has('a') || keysPressed.has('s') || keysPressed.has('d')) {
         const rotateAngle = Math.PI / 120;
         const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
+        const spherical = new THREE.Spherical().setFromVector3(offset);
 
-        if (keysPressed.has('a')) {
-          offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotateAngle);
-        }
-        if (keysPressed.has('d')) {
-          offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), -rotateAngle);
-        }
-        if (keysPressed.has('w')) {
-          const axis = new THREE.Vector3().crossVectors(offset, new THREE.Vector3(0, 1, 0)).normalize();
-          offset.applyAxisAngle(axis, -rotateAngle);
-        }
-        if (keysPressed.has('s')) {
-          const axis = new THREE.Vector3().crossVectors(offset, new THREE.Vector3(0, 1, 0)).normalize();
-          offset.applyAxisAngle(axis, rotateAngle);
-        }
+        if (keysPressed.has('a')) spherical.theta += rotateAngle;
+        if (keysPressed.has('d')) spherical.theta -= rotateAngle;
+        if (keysPressed.has('w')) spherical.phi += rotateAngle;
+        if (keysPressed.has('s')) spherical.phi -= rotateAngle;
 
+        spherical.makeSafe();
+        offset.setFromSpherical(spherical);
         camera.position.addVectors(controls.target, offset);
+
         controls.update();
         requestRender();
       } else if (controls.enableDamping) {
