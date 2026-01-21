@@ -8,7 +8,7 @@
 
   import {currentPuzzleId, puzzleData, currentStateId, activePieceId, moveCount, isVictory} from '../stores/gameStore';
   import {tryMove as tryLogicMove} from '../lib/puzzleLogic';
-  import {PIECE_COLORS, createPieceMaterial, setupSceneLighting} from '../lib/visuals';
+  import {PIECE_COLORS, createPieceMaterial, setupSceneLighting, disposeSceneObjects} from '../lib/visuals';
   import type {PuzzleData} from '../types/puzzle';
 
   let container: HTMLDivElement;
@@ -81,18 +81,9 @@
       window.removeEventListener('keyup', onKeyUp);
       if (controls) controls.removeEventListener('change', requestRender);
       renderer.dispose();
+
       // Dispose materials and geometries
-      pieceMeshes.forEach((m) => {
-        const mesh = m as THREE.Mesh;
-        if (mesh.geometry) mesh.geometry.dispose();
-        if (mesh.material) {
-          if (Array.isArray(mesh.material)) {
-            (mesh.material as THREE.Material[]).forEach((mat: THREE.Material) => mat.dispose());
-          } else {
-            (mesh.material as THREE.Material).dispose();
-          }
-        }
-      });
+      disposeSceneObjects(pieceMeshes);
     };
   });
 
@@ -199,28 +190,7 @@
     // Cleanup old meshes
     for (const id in pieceGroups) {
       const group = pieceGroups[id];
-      group.traverse((child) => {
-        if ((child as THREE.Mesh).isMesh) {
-          const mesh = child as THREE.Mesh;
-          mesh.geometry.dispose();
-          if (Array.isArray(mesh.material)) {
-            (mesh.material as THREE.Material[]).forEach((m: THREE.Material) => m.dispose());
-          } else {
-            (mesh.material as THREE.Material).dispose();
-          }
-          mesh.children.forEach((c) => {
-            const line = c as THREE.LineSegments;
-            if (line.geometry) line.geometry.dispose();
-            if (line.material) {
-              if (Array.isArray(line.material)) {
-                (line.material as THREE.Material[]).forEach((m: THREE.Material) => m.dispose());
-              } else {
-                (line.material as THREE.Material).dispose();
-              }
-            }
-          });
-        }
-      });
+      disposeSceneObjects(group);
       scene.remove(group);
     }
     pieceGroups = {};
@@ -543,9 +513,7 @@
     if (event.button !== 0 || !$activePieceId) return;
 
     // Calculate mouse position
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    getNormalizedMousePos(event, renderer.domElement, mouse);
 
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(pieceMeshes, false);
@@ -584,8 +552,7 @@
   function onPointerMove(event: MouseEvent) {
     if (!isDragging || !selectedPieceGroup || !$activePieceId) return;
 
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    getNormalizedMousePos(event, renderer.domElement, mouse);
 
     raycaster.setFromCamera(mouse, camera);
     const intersectPoint = new THREE.Vector3();
@@ -739,9 +706,7 @@
   }
 
   function onDoubleClick(event: MouseEvent) {
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    getNormalizedMousePos(event, renderer.domElement, mouse);
 
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(pieceMeshes, false);
@@ -1034,6 +999,12 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
+  }
+  
+  function getNormalizedMousePos(event: MouseEvent, element: HTMLElement, target: THREE.Vector2) {
+    const rect = element.getBoundingClientRect();
+    target.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    target.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
   }
 
   export function snapToView(view: string) {

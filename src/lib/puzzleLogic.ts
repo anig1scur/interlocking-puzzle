@@ -43,11 +43,46 @@ export function tryMove(
   const axisIdx = axis === 'x' ? 0 : axis === 'y' ? 1 : 2;
   const targetVal = currentState[pieceId][axisIdx] + delta;
 
-  // Find a neighbor where the piece has moved to the target position
-  const nextStateId = neighbors.find(id => {
+  // Find all neighbors where the piece has moved to the target position
+  const validNeighbors = neighbors.filter(id => {
     const state = puzzleData.states[id];
     return state && state[pieceId] && state[pieceId][axisIdx] === targetVal;
   });
 
-  return nextStateId || null;
+  if (validNeighbors.length === 0) return null;
+
+  // Sort by number of moving pieces (ascending) to prefer minimal movement
+  validNeighbors.sort((a, b) => {
+    const stateA = puzzleData.states[a];
+    const stateB = puzzleData.states[b];
+
+    let changesA = 0;
+    let changesB = 0;
+
+    // Count changes for stateA
+    for (const pid in stateA) {
+      if (currentState[pid]) {
+        if (stateA[pid][0] !== currentState[pid][0] ||
+          stateA[pid][1] !== currentState[pid][1] ||
+          stateA[pid][2] !== currentState[pid][2]) {
+          changesA++;
+        }
+      }
+    }
+
+    // Count changes for stateB
+    for (const pid in stateB) {
+      if (currentState[pid]) {
+        if (stateB[pid][0] !== currentState[pid][0] ||
+          stateB[pid][1] !== currentState[pid][1] ||
+          stateB[pid][2] !== currentState[pid][2]) {
+          changesB++;
+        }
+      }
+    }
+
+    return changesA - changesB;
+  });
+
+  return validNeighbors[0];
 }
