@@ -615,12 +615,12 @@
         if (comp.abs <= otherMag) continue;
 
         const dir = Math.sign(comp.val);
-        const winMatch = !!$puzzleData?.win_transitions?.find(
+        const winMatch = !!$puzzleData?.win_transitions?.some(
           (t) =>
             t.state_id === $currentStateId &&
             t.piece_id === $activePieceId &&
             t.axis === comp.axis &&
-            (dir > 0 ? t.direction < 0 : t.direction > 0),
+            Math.sign(dir) === Math.sign(t.direction),
         );
 
         const logicMatch = !!tryLogicMove($puzzleData!, $currentStateId, $activePieceId, comp.axis, dir);
@@ -920,16 +920,16 @@
         }, 250);
       }
     } else {
-      const winMove = $puzzleData.win_transitions?.find(
+      const winMove = $puzzleData.win_transitions?.some(
         (t) =>
           t.state_id === $currentStateId &&
           t.piece_id === pieceId &&
           t.axis === axis &&
-          (delta < 0 ? t.direction > 0 : t.direction < 0),
+          Math.sign(delta) === Math.sign(t.direction),
       );
 
       if (winMove && !$isVictory) {
-        triggerWin(pieceId, axis, delta);
+        triggerWin($currentStateId, axis, delta);
       } else if (source === 'keyboard') {
         playSound('fail');
 
@@ -959,7 +959,7 @@
     }
   }
 
-  function triggerWin(pieceId: string, axis: 'x' | 'y' | 'z', delta: number) {
+  function triggerWin(stateId: string, axis: 'x' | 'y' | 'z', delta: number) {
     if (winOngoing) return;
     winOngoing = true;
 
@@ -973,53 +973,59 @@
       confetti({
         particleCount: 60,
         spread: 90,
-        origin: { y: 0.6 },
+        origin: {y: 0.6},
       });
     }, 1000);
 
-    const group = pieceGroups[pieceId];
-    if (group) {
-      const flyDir = new THREE.Vector3();
-      flyDir[axis] = delta * 15 * currentVoxelSize;
+    const winningMoves = ($puzzleData?.win_transitions || []).filter(
+      (t) => t.state_id === stateId && t.axis === axis && Math.sign(delta) === Math.sign(t.direction),
+    );
 
-      gsap.to(group.position, {
-        x: group.position.x + flyDir.x,
-        y: group.position.y + flyDir.y,
-        z: group.position.z + flyDir.z,
-        duration: 1.2,
-        ease: 'expo.out',
-        onUpdate: requestRender,
-      });
+    winningMoves.forEach((move) => {
+      const group = pieceGroups[move.piece_id];
+      if (group) {
+        const flyDir = new THREE.Vector3();
+        flyDir[axis] = delta * 15 * currentVoxelSize;
 
-      const fadeObj = { opacity: 1 };
-      gsap.to(fadeObj, {
-        opacity: 0,
-        duration: 1.2,
-        ease: 'expo.out',
-        onUpdate: () => {
-          group.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-              const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
-              mat.transparent = true;
-              mat.opacity = fadeObj.opacity;
-            }
-          });
-          requestRender();
-        },
-        onComplete: () => {
-          group.visible = false;
-          // Reset for potential reuse in the same session without reload
-          group.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-              const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
-              mat.opacity = 1.0;
-              mat.transparent = false;
-            }
-          });
-          requestRender();
-        },
-      });
-    }
+        gsap.to(group.position, {
+          x: group.position.x + flyDir.x,
+          y: group.position.y + flyDir.y,
+          z: group.position.z + flyDir.z,
+          duration: 1.2,
+          ease: 'expo.out',
+          onUpdate: requestRender,
+        });
+
+        const fadeObj = {opacity: 1};
+        gsap.to(fadeObj, {
+          opacity: 0,
+          duration: 1.2,
+          ease: 'expo.out',
+          onUpdate: () => {
+            group.traverse((child) => {
+              if ((child as THREE.Mesh).isMesh) {
+                const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
+                mat.transparent = true;
+                mat.opacity = fadeObj.opacity;
+              }
+            });
+            requestRender();
+          },
+          onComplete: () => {
+            group.visible = false;
+            // Reset for potential reuse in the same session without reload
+            group.traverse((child) => {
+              if ((child as THREE.Mesh).isMesh) {
+                const mat = (child as THREE.Mesh).material as THREE.MeshPhongMaterial;
+                mat.opacity = 1.0;
+                mat.transparent = false;
+              }
+            });
+            requestRender();
+          },
+        });
+      }
+    });
   }
 
   function onWindowResize() {

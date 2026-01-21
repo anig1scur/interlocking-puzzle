@@ -712,37 +712,37 @@
       "state_id": "10",
       "piece_id": "piece1",
       "axis": "z",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "10",
       "piece_id": "piece2",
       "axis": "z",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "10",
       "piece_id": "piece3",
       "axis": "z",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "11",
       "piece_id": "piece1",
       "axis": "z",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "11",
       "piece_id": "piece2",
       "axis": "z",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "11",
       "piece_id": "piece3",
       "axis": "z",
-      "direction": 1
+      "direction": -1
     }
   ],
   "voxel_size": 7.0

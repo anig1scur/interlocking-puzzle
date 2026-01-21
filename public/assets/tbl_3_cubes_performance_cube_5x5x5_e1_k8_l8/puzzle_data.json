@@ -1722,25 +1722,25 @@
       "state_id": "11",
       "piece_id": "piece1",
       "axis": "y",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "12",
       "piece_id": "piece1",
       "axis": "y",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "13",
       "piece_id": "piece1",
       "axis": "y",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "14",
       "piece_id": "piece1",
       "axis": "y",
-      "direction": 1
+      "direction": -1
     }
   ],
   "voxel_size": 0.4

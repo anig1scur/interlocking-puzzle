@@ -459,7 +459,7 @@
       "state_id": "12",
       "piece_id": "piece2",
       "axis": "y",
-      "direction": -1
+      "direction": 1
     }
   ],
   "voxel_size": 0.25

@@ -366,25 +366,25 @@
       "state_id": "8",
       "piece_id": "piece1",
       "axis": "x",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "10",
       "piece_id": "piece1",
       "axis": "x",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "11",
       "piece_id": "piece1",
       "axis": "x",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "13",
       "piece_id": "piece1",
       "axis": "x",
-      "direction": -1
+      "direction": 1
     }
   ],
   "voxel_size": 0.12

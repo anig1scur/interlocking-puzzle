@@ -470,19 +470,19 @@
       "state_id": "5",
       "piece_id": "piece1",
       "axis": "x",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "6",
       "piece_id": "piece1",
       "axis": "x",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "7",
       "piece_id": "piece1",
       "axis": "x",
-      "direction": 1
+      "direction": -1
     }
   ],
   "voxel_size": 0.4

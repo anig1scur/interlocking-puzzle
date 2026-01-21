@@ -2368,73 +2368,73 @@
       "state_id": "19",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "20",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "22",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "23",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "25",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "26",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "27",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "28",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "29",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "30",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "31",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "32",
       "piece_id": "piece5",
       "axis": "z",
-      "direction": -1
+      "direction": 1
     }
   ],
   "voxel_size": 0.4
