@@ -963,34 +963,39 @@
     if (winOngoing) return;
     winOngoing = true;
 
+    isDragging = false;
+    selectedPieceGroup = null;
+    controls.enabled = true;
+
     setTimeout(() => {
       isVictory.set(true);
       playSound('win');
       confetti({
         particleCount: 60,
         spread: 90,
-        origin: {y: 0.6},
+        origin: { y: 0.6 },
       });
-    }, 1200);
+    }, 1000);
 
     const group = pieceGroups[pieceId];
     if (group) {
-      // flying away
       const flyDir = new THREE.Vector3();
-      flyDir[axis] = delta * 5 * currentVoxelSize;
+      flyDir[axis] = delta * 15 * currentVoxelSize;
 
       gsap.to(group.position, {
         x: group.position.x + flyDir.x,
         y: group.position.y + flyDir.y,
         z: group.position.z + flyDir.z,
-        duration: 1.0,
+        duration: 1.2,
+        ease: 'expo.out',
+        onUpdate: requestRender,
       });
 
-      const fadeObj = {opacity: 1};
+      const fadeObj = { opacity: 1 };
       gsap.to(fadeObj, {
         opacity: 0,
-        duration: 1.0,
-        ease: 'power2.in',
+        duration: 1.2,
+        ease: 'expo.out',
         onUpdate: () => {
           group.traverse((child) => {
             if ((child as THREE.Mesh).isMesh) {
@@ -1011,6 +1016,7 @@
               mat.transparent = false;
             }
           });
+          requestRender();
         },
       });
     }
