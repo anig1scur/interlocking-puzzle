@@ -57,6 +57,20 @@
     isOpen = false;
   }
 
+
+  function formatPuzzleName(name: string): string {
+    const parts = name.split('/');
+    const leaf = parts.pop() || '';
+    
+    if (parts.length >= 2) {
+       const parent = parts[parts.length - 1];
+       if (parent.endsWith('_GA')) return `${leaf}_GA`;
+       if (parent.endsWith('_Our')) return `${leaf}_Our`;
+    }
+    
+    return leaf;
+  }
+
   function scrollToActive(node: HTMLElement, condition: boolean) {
      if (condition) {
        node.scrollIntoView({ block: 'center', behavior: 'instant' });
@@ -109,7 +123,11 @@
         
         <div class="overflow-hidden flex-1">
           <div class="font-bold text-white truncate group-hover:text-white transition-colors text-sm md:text-base">
-            {$puzzleList.find(p => p.id === $currentPuzzleId)?.name.split('/').pop() || 'Select...'}
+            {#if $currentPuzzleId}
+               {formatPuzzleName($puzzleList.find(p => p.id === $currentPuzzleId)?.name || '')}
+            {:else}
+               Select...
+            {/if}
           </div>
            {#if $currentPuzzleId}
              <div class="flex items-center gap-2 mt-0.5">
@@ -130,7 +148,7 @@
 
     <!-- Custom Dropdown -->
     {#if isOpen}
-      <div class="absolute top-[calc(100%+12px)] left-0 right-0 bg-black/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-50 max-h-[60vh] overflow-y-auto custom-scrollbar flex flex-col p-2 gap-1 animate-in fade-in zoom-in-95 duration-200">
+      <div class="absolute top-[calc(100%+12px)] left-0 right-0 bg-black/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-50 max-h-[60vh] overflow-y-auto custom-scrollbar flex flex-col p-1 w-80 gap-1 animate-in fade-in zoom-in-95 duration-200">
          {#each $puzzleList as p}
             <button
               class="flex items-center cursor-pointer gap-4 w-full p-2.5 rounded-xl text-left transition-all
@@ -152,7 +170,7 @@
                
                <div class="overflow-hidden flex-1">
                  <div class="text-sm font-bold {p.id === $currentPuzzleId ? 'text-white' : 'text-white/70'} truncate">
-                   {p.name.split('/').pop()}
+                   {formatPuzzleName(p.name)}
                  </div>
                  {#if p.level}
                    <div class="text-[9px] font-black text-white/50 uppercase tracking-widest mt-0.5">

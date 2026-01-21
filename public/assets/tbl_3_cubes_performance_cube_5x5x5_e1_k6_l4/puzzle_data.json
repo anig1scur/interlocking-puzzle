@@ -461,8 +461,8 @@
   ],
   "level": 4,
   "goal_states": [
-    "5",
     "6",
+    "5",
     "7"
   ],
   "win_transitions": [

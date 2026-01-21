@@ -918,9 +918,9 @@
   "level": 8,
   "goal_states": [
     "10",
-    "12",
     "13",
     "14",
+    "12",
     "15"
   ],
   "win_transitions": [

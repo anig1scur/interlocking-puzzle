@@ -518,7 +518,16 @@
     ]
   ],
   "level": 11,
-  "goal_states": [],
-  "win_transitions": [],
+  "goal_states": [
+    "15"
+  ],
+  "win_transitions": [
+    {
+      "state_id": "15",
+      "piece_id": "piece3",
+      "axis": "y",
+      "direction": -1
+    }
+  ],
   "voxel_size": 0.4
 }

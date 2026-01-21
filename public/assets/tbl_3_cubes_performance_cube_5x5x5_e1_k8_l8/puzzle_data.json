@@ -1712,9 +1712,9 @@
   ],
   "level": 8,
   "goal_states": [
+    "13",
     "11",
     "12",
-    "13",
     "14"
   ],
   "win_transitions": [

@@ -1627,8 +1627,8 @@
   ],
   "level": 15,
   "goal_states": [
-    "47",
-    "49"
+    "49",
+    "47"
   ],
   "win_transitions": [
     {

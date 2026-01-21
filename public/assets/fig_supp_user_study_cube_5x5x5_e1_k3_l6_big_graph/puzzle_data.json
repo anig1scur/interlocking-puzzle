@@ -347,9 +347,9 @@
   ],
   "level": 6,
   "goal_states": [
-    "8",
-    "9",
     "10",
+    "9",
+    "8",
     "11"
   ],
   "win_transitions": [

@@ -144,11 +144,7 @@
     "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_Our/Cube_5x5x5_E1_K3_L11",
     "level": 11
   },
-  {
-    "id": "tbl_2_cubes_compare_cube_5x5x5_e1_our_cube_5x5x5_e1_k4_l16",
-    "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_Our/Cube_5x5x5_E1_K4_L16",
-    "level": 16
-  },
+
   {
     "id": "tbl_2_cubes_compare_cube_5x5x5_e1_our_cube_5x5x5_e1_k5_l14",
     "name": "tbl_2_cubes_compare/Cube_5x5x5_E1_Our/Cube_5x5x5_E1_K5_L14",
@@ -179,11 +175,7 @@
     "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_Our/Cube_6x6x6_E1_K4_L20",
     "level": 20
   },
-  {
-    "id": "tbl_2_cubes_compare_cube_6x6x6_e1_our_cube_6x6x6_e1_k5_l27",
-    "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_Our/Cube_6x6x6_E1_K5_L27",
-    "level": 27
-  },
+
   {
     "id": "tbl_2_cubes_compare_cube_6x6x6_e1_our_cube_6x6x6_e1_k6_l17",
     "name": "tbl_2_cubes_compare/Cube_6x6x6_E1_Our/Cube_6x6x6_E1_K6_L17",
@@ -194,11 +186,7 @@
     "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K4_L12",
     "level": 12
   },
-  {
-    "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k4_l16",
-    "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K4_L16",
-    "level": 16
-  },
+
   {
     "id": "tbl_3_cubes_performance_cube_5x5x5_e1_k4_l4",
     "name": "tbl_3_cubes_performance/Cube_5x5x5_E1_K4_L4",

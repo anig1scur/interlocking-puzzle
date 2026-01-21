@@ -488,9 +488,16 @@
   ],
   "level": 8,
   "goal_states": [
-    "9"
+    "9",
+    "8"
   ],
   "win_transitions": [
+    {
+      "state_id": "8",
+      "piece_id": "piece2",
+      "axis": "x",
+      "direction": -1
+    },
     {
       "state_id": "9",
       "piece_id": "piece2",
