@@ -508,27 +508,15 @@
   "win_transitions": [
     {
       "state_id": "5",
-      "piece_id": "piece1",
+      "piece_id": "piece3",
       "axis": "x",
-      "direction": 1
-    },
-    {
-      "state_id": "5",
-      "piece_id": "piece2",
-      "axis": "x",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "6",
-      "piece_id": "piece1",
+      "piece_id": "piece3",
       "axis": "x",
-      "direction": 1
-    },
-    {
-      "state_id": "6",
-      "piece_id": "piece2",
-      "axis": "x",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "7",
@@ -544,15 +532,9 @@
     },
     {
       "state_id": "9",
-      "piece_id": "piece1",
+      "piece_id": "piece3",
       "axis": "x",
-      "direction": 1
-    },
-    {
-      "state_id": "9",
-      "piece_id": "piece2",
-      "axis": "x",
-      "direction": 1
+      "direction": -1
     },
     {
       "state_id": "15",

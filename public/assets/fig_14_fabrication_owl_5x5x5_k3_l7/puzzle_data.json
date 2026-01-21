@@ -218,15 +218,9 @@
   "win_transitions": [
     {
       "state_id": "6",
-      "piece_id": "piece1",
+      "piece_id": "piece3",
       "axis": "z",
-      "direction": -1
-    },
-    {
-      "state_id": "6",
-      "piece_id": "piece2",
-      "axis": "z",
-      "direction": -1
+      "direction": 1
     }
   ],
   "voxel_size": 0.2

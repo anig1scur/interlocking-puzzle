@@ -1611,21 +1611,9 @@
     },
     {
       "state_id": "7",
-      "piece_id": "piece1",
+      "piece_id": "piece4",
       "axis": "y",
-      "direction": -1
-    },
-    {
-      "state_id": "7",
-      "piece_id": "piece2",
-      "axis": "y",
-      "direction": -1
-    },
-    {
-      "state_id": "7",
-      "piece_id": "piece3",
-      "axis": "y",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "10",
@@ -1653,21 +1641,9 @@
     },
     {
       "state_id": "13",
-      "piece_id": "piece1",
+      "piece_id": "piece4",
       "axis": "y",
-      "direction": -1
-    },
-    {
-      "state_id": "13",
-      "piece_id": "piece2",
-      "axis": "y",
-      "direction": -1
-    },
-    {
-      "state_id": "13",
-      "piece_id": "piece3",
-      "axis": "y",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "15",
@@ -1713,21 +1689,9 @@
     },
     {
       "state_id": "22",
-      "piece_id": "piece1",
+      "piece_id": "piece4",
       "axis": "y",
-      "direction": -1
-    },
-    {
-      "state_id": "22",
-      "piece_id": "piece2",
-      "axis": "y",
-      "direction": -1
-    },
-    {
-      "state_id": "22",
-      "piece_id": "piece3",
-      "axis": "y",
-      "direction": -1
+      "direction": 1
     },
     {
       "state_id": "31",
