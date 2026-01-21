@@ -70,11 +70,19 @@
       Interlocking
       <span class="block text-3xl font-black text-white">PUZZLES</span>
     </h1>
-    <img 
-      src="{import.meta.env.BASE_URL}logo.png" 
-      alt="Interactive Puzzle Logo" 
-      class="w-16 h-16 object-contain grayscale transition-opacity"
-    />
+    <a 
+      href="https://github.com/anig1scur/interlocking-puzzle" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      class="group/logo relative"
+      title="View on GitHub"
+    >
+      <img 
+        src="{import.meta.env.BASE_URL}logo.png" 
+        alt="Interactive Puzzle Logo" 
+        class="w-16 h-16 object-contain grayscale opacity-60 group-hover/logo:grayscale-0 group-hover/logo:opacity-100 transition-all duration-300"
+      />
+    </a>
   </div>
 
   <!-- Current Selection Display -->

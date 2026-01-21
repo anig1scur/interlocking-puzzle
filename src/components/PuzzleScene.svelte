@@ -61,6 +61,7 @@
   $: {
     $activePieceId;
     collisionCount = 0;
+    if (isLoaded) playSound('select');
   }
 
   $: updateVisuals($activePieceId, isGhostMode, isDragging ? ($activePieceId ?? undefined) : undefined, collisionCount);
@@ -127,7 +128,7 @@
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
 
-  function playSound(type: 'success' | 'fail' | 'win' | 'thud' | 'slide' | 'pop') {
+  function playSound(type: 'success' | 'fail' | 'win' | 'thud' | 'slide' | 'pop' | 'select') {
     if (!audioCtx) return;
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
@@ -172,12 +173,21 @@
         o.stop(startTime + 0.3);
       });
     } else if (type === 'slide') {
-      // Faint friction
-      oscillator.type = 'sawtooth';
-      oscillator.frequency.setValueAtTime(100, currTime);
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(150, currTime);
+      oscillator.frequency.exponentialRampToValueAtTime(50, currTime + 0.04);
       gainNode.gain.setValueAtTime(0.001, currTime);
-      gainNode.gain.linearRampToValueAtTime(0.2, currTime + 0.005);
-      gainNode.gain.linearRampToValueAtTime(0, currTime + 0.05);
+      gainNode.gain.linearRampToValueAtTime(0.1, currTime + 0.005);
+      gainNode.gain.linearRampToValueAtTime(0, currTime + 0.04);
+      oscillator.start();
+      oscillator.stop(currTime + 0.04);
+    } else if (type === 'select') {
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(660, currTime);
+      oscillator.frequency.exponentialRampToValueAtTime(440, currTime + 0.05);
+      gainNode.gain.setValueAtTime(0.001, currTime);
+      gainNode.gain.linearRampToValueAtTime(0.1, currTime + 0.005);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.05);
       oscillator.start();
       oscillator.stop(currTime + 0.05);
     }
