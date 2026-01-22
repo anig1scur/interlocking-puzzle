@@ -6,7 +6,17 @@
   import gsap from 'gsap';
   import confetti from 'canvas-confetti';
 
-  import {currentPuzzleId, puzzleData, currentStateId, activePieceId, moveCount, isVictory, nextPuzzle, prevPuzzle, showLeaderboard} from '../stores/gameStore';
+  import {
+    currentPuzzleId,
+    puzzleData,
+    currentStateId,
+    activePieceId,
+    moveCount,
+    isVictory,
+    nextPuzzle,
+    prevPuzzle,
+    showLeaderboard,
+  } from '../stores/gameStore';
   import {tryMove as tryLogicMove} from '../lib/puzzleLogic';
   import {PIECE_COLORS, createPieceMaterial, setupSceneLighting, disposeSceneObjects} from '../lib/visuals';
   import {audioManager} from '../lib/audio';
@@ -42,8 +52,10 @@
   let hitCounted = false;
   let isColliding = false;
   let winOngoing = false;
+  let hoveredPieceId: string | null = null;
+  let isOrbiting = false;
   let lastMoveTime = 0;
-  const MOVE_COOLDOWN = 200; 
+  const MOVE_COOLDOWN = 200;
   let lastGamepadMoveTime = 0;
   let debugGamepadState: any = null;
 
@@ -118,7 +130,6 @@
   function requestRender() {
     needsRender = true;
   }
-
 
   async function loadPuzzleAssets(data: PuzzleData) {
     if (!scene) return;
@@ -337,7 +348,13 @@
     scene.add(axisGizmos);
   }
 
-  function updateVisuals(activeId: string | null, ghost: boolean, draggingPieceId?: string, count: number = 0, linkedPieceIds: string[] = []) {
+  function updateVisuals(
+    activeId: string | null,
+    ghost: boolean,
+    draggingPieceId?: string,
+    count: number = 0,
+    linkedPieceIds: string[] = [],
+  ) {
     if (!pieceGroups) return;
 
     // Conditional transparency: if spacebar is down OR we've hit enough collisions
@@ -394,7 +411,7 @@
             mat.emissiveIntensity = 0.3;
             if (lineMat) {
               lineMat.opacity = 1.0;
-              lineMat.color.set(0xffcc00); 
+              lineMat.color.set(0xffcc00);
               lineMat.transparent = false;
             }
           } else {
@@ -413,6 +430,17 @@
       });
     }
   }
+
+  $: cursorStyle = isDragging
+    ? 'grabbing'
+    : hoveredPieceId === $activePieceId
+      ? 'grab'
+      : isOrbiting
+        ? 'move'
+        : hoveredPieceId
+          ? 'move'
+          : 'default';
+
   // Interaction Handlers
   function onPointerDown(event: MouseEvent) {
     audioManager.resume();
@@ -432,6 +460,7 @@
       if (pieceId === $activePieceId) {
         selectedPieceGroup = pieceGroups[pieceId];
         isDragging = true;
+        hoveredPieceId = null; // Clear hover when dragging starts
         controls.enabled = false;
 
         dragStartPos.copy(selectedPieceGroup.position);
@@ -453,13 +482,25 @@
         // Initial visual update
         updateVisuals(pieceId, isGhostMode, undefined, collisionCount);
       }
+    } else {
+      isOrbiting = true;
     }
   }
 
   function onPointerMove(event: MouseEvent) {
-    if (!isDragging || !selectedPieceGroup || !$activePieceId) return;
-
     getNormalizedMousePos(event, renderer.domElement, mouse);
+
+    if (!isDragging) {
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(pieceMeshes, false);
+      if (intersects.length > 0) {
+        hoveredPieceId = intersects[0].object.userData.pieceId;
+      } else {
+        hoveredPieceId = null;
+      }
+    }
+
+    if (!isDragging || !selectedPieceGroup || !$activePieceId) return;
 
     raycaster.setFromCamera(mouse, camera);
     const intersectPoint = new THREE.Vector3();
@@ -512,11 +553,13 @@
             if (nextStateId) {
               const nextState = $puzzleData!.states[nextStateId];
               const currState = $puzzleData!.states[$currentStateId];
-              linkedIds = Object.keys(nextState).filter(pid => {
+              linkedIds = Object.keys(nextState).filter((pid) => {
                 if (pid === $activePieceId) return false;
-                return nextState[pid][0] !== currState[pid][0] ||
-                       nextState[pid][1] !== currState[pid][1] ||
-                       nextState[pid][2] !== currState[pid][2];
+                return (
+                  nextState[pid][0] !== currState[pid][0] ||
+                  nextState[pid][1] !== currState[pid][1] ||
+                  nextState[pid][2] !== currState[pid][2]
+                );
               });
             }
           }
@@ -589,6 +632,7 @@
   function onPointerUp() {
     if (isDragging) {
       isDragging = false;
+      isOrbiting = false;
       controls.enabled = true;
 
       // Revert to exact grid position if we were in a "wiggle" or partial drag
@@ -609,6 +653,8 @@
       hitCounted = false;
       isColliding = false;
       updateVisuals($activePieceId, isGhostMode, undefined, collisionCount);
+    } else {
+      isOrbiting = false;
     }
   }
 
@@ -646,13 +692,13 @@
 
   function onKeyDown(event: KeyboardEvent) {
     const key = event.key.toLowerCase();
-    
+
     if (event.code === 'Space') {
       event.preventDefault();
       return;
     }
 
-    if (event.repeat) return; 
+    if (event.repeat) return;
 
     if (key === 'r') {
       controls.reset();
@@ -681,7 +727,6 @@
       }
     }
   }
-
 
   function attemptMove(pieceId: string, axis: 'x' | 'y' | 'z', delta: number, source = 'drag') {
     if (!$puzzleData) return;
@@ -723,14 +768,16 @@
       const currState = $puzzleData.states[$currentStateId];
       let linkedIds: string[] = [];
       if (nextStateData && currState) {
-        linkedIds = Object.keys(nextStateData).filter(pid => {
+        linkedIds = Object.keys(nextStateData).filter((pid) => {
           if (pid === pieceId) return false;
-          return nextStateData[pid][0] !== currState[pid][0] ||
-                 nextStateData[pid][1] !== currState[pid][1] ||
-                 nextStateData[pid][2] !== currState[pid][2];
+          return (
+            nextStateData[pid][0] !== currState[pid][0] ||
+            nextStateData[pid][1] !== currState[pid][1] ||
+            nextStateData[pid][2] !== currState[pid][2]
+          );
         });
       }
-      
+
       updateVisuals(pieceId, isGhostMode, pieceId, collisionCount, linkedIds);
 
       // For keyboard/gamepad moves, restore opaque state after animation duration
@@ -845,7 +892,7 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
   }
-  
+
   function getNormalizedMousePos(event: MouseEvent, element: HTMLElement, target: THREE.Vector2) {
     const rect = element.getBoundingClientRect();
     target.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -880,14 +927,14 @@
       if (camRotatePhi !== 0 || camRotateTheta !== 0) {
         const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
         const spherical = new THREE.Spherical().setFromVector3(offset);
-        
+
         spherical.theta += camRotateTheta;
         spherical.phi += camRotatePhi;
-        
+
         spherical.makeSafe();
         offset.setFromSpherical(spherical);
         camera.position.addVectors(controls.target, offset);
-        
+
         controls.update();
         requestRender();
       } else if (controls.enableDamping) {
@@ -896,43 +943,47 @@
 
       // --- 2. Active Piece Movement (Left Stick / D-Pad) ---
       if ($activePieceId && (Math.abs(gpState.moveVector.x) > 0.2 || Math.abs(gpState.moveVector.y) > 0.2)) {
-         const now = Date.now();
-         // Limit repeat rate for gamepad moves
-         if (now - lastGamepadMoveTime > 150) { 
-             const moveAxis = keyboardInput.getMoveAxisFromScreenVector(gpState.moveVector.x, gpState.moveVector.y, camera);
-             if (moveAxis) {
-                 const { axis, delta } = moveAxis;
-                 attemptMove($activePieceId, axis, delta, 'gamepad');
-                 lastGamepadMoveTime = now;
-             }
-         }
+        const now = Date.now();
+        // Limit repeat rate for gamepad moves
+        if (now - lastGamepadMoveTime > 150) {
+          const moveAxis = keyboardInput.getMoveAxisFromScreenVector(
+            gpState.moveVector.x,
+            gpState.moveVector.y,
+            camera,
+          );
+          if (moveAxis) {
+            const {axis, delta} = moveAxis;
+            attemptMove($activePieceId, axis, delta, 'gamepad');
+            lastGamepadMoveTime = now;
+          }
+        }
       }
 
       // --- 3. Actions ---
       if (gpState.actions.nextPiece) cycleActivePiece(1);
       if (gpState.actions.prevPiece) cycleActivePiece(-1);
-      
+
       // Next Level
       if (gpState.actions.nextLevel) {
-          nextPuzzle();
+        nextPuzzle();
       }
 
       // Prev Level
       if (gpState.actions.prevLevel) {
-          prevPuzzle();
+        prevPuzzle();
       }
 
       // Leaderboard toggle
       if (gpState.actions.toggleLeaderboard) {
-          showLeaderboard.update(v => !v);
+        showLeaderboard.update((v) => !v);
       }
-      
+
       // Ghost Mode (Keyboard Space or Gamepad Trigger)
       const targetGhostMode = keyboardInput.isPressed(' ') || gpState.actions.ghostMode;
       if (targetGhostMode !== isGhostMode) {
-          isGhostMode = targetGhostMode;
-          updateVisuals($activePieceId, isGhostMode, undefined, collisionCount);
-          requestRender();
+        isGhostMode = targetGhostMode;
+        updateVisuals($activePieceId, isGhostMode, undefined, collisionCount);
+        requestRender();
       }
     }
 
@@ -979,6 +1030,7 @@
 <div
   bind:this={container}
   class="outline-none w-full h-full relative"
+  style="cursor: {cursorStyle}"
   on:pointerdown={onPointerDown}
   on:pointermove={onPointerMove}
   on:pointerup={onPointerUp}
@@ -987,7 +1039,9 @@
 ></div>
 
 {#if debugGamepadState}
-<div class="absolute top-0 right-0 p-2 bg-black/70 text-white text-xs font-mono pointer-events-none z-50 whitespace-pre">
-  GP: {JSON.stringify(debugGamepadState, null, 2)}
-</div>
+  <div
+    class="absolute top-0 right-0 p-2 bg-black/70 text-white text-xs font-mono pointer-events-none z-50 whitespace-pre"
+  >
+    GP: {JSON.stringify(debugGamepadState, null, 2)}
+  </div>
 {/if}
