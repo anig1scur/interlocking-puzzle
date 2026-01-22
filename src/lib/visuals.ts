@@ -1,23 +1,24 @@
 import * as THREE from 'three';
 
 export const PIECE_COLORS = [
-  0x3258a8, // Blue
-  0x3cb34a, // American Green
-  0xf8d108, // Metallic Yellow
-  0xe14a9a, // Raspberry Pink
-  0x683dab, // Purple Heart
-  0xd74b48  // English Vermillion
+  0xA8D8EA, // Soft Blue
+  0xAAEDBE, // Soft Mint
+  0xFFFFD1, // Pale Yellow
+  0xFFC7C7, // Soft Pink
+  0xD6D1F5, // Soft Lavender
+  0xFF9AA2  // Pastel Salmon
 ];
 
 export const DEFAULT_MATERIAL_PROPS = {
-  specular: 0x111111,
-  shininess: 30
+  specular: 0x222222,
+  shininess: 10
 };
 
 export function createPieceMaterial(color: number) {
-  return new THREE.MeshPhongMaterial({
+  return new THREE.MeshStandardMaterial({
     color,
-    ...DEFAULT_MATERIAL_PROPS
+    roughness: 0.8,
+    metalness: 0.1
   });
 }
 

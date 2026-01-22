@@ -3,8 +3,13 @@
   import * as THREE from 'three';
   import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
   import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader.js';
+  import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+  import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
   import gsap from 'gsap';
   import confetti from 'canvas-confetti';
+
+  import { MoebiusShader } from '../lib/shaders/MoebiusShader';
 
   import {currentPuzzleId, puzzleData, currentStateId, activePieceId, moveCount, isVictory, nextPuzzle, prevPuzzle, showLeaderboard} from '../stores/gameStore';
   import {tryMove as tryLogicMove} from '../lib/puzzleLogic';
@@ -19,6 +24,10 @@
   let scene: THREE.Scene;
   let camera: THREE.PerspectiveCamera;
   let renderer: THREE.WebGLRenderer;
+  let composer: EffectComposer;
+  let moebiusPass: ShaderPass;
+  let normalRenderTarget: THREE.WebGLRenderTarget;
+  let normalMaterial = new THREE.MeshNormalMaterial();
   let controls: OrbitControls;
   let needsRender = false;
 
@@ -93,7 +102,25 @@
 
   function initScene() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1a1a1a);
+    
+    // Gradient Background (Clouds/Foggy Sky)
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const context = canvas.getContext('2d');
+    if (context) {
+      const gradient = context.createRadialGradient(256, 256, 50, 256, 256, 400);
+      gradient.addColorStop(0, '#f8f9fa'); // Light cream/white
+      gradient.addColorStop(0.5, '#e9ecef'); // Soft grey
+      gradient.addColorStop(1, '#dee2e6'); // Deeper grey
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, 512, 512);
+      
+      const texture = new THREE.CanvasTexture(canvas);
+      scene.background = texture;
+    } else {
+      scene.background = new THREE.Color(0xf1f3f5);
+    }
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(3, 3, 3);
@@ -109,6 +136,40 @@
 
     // Lights
     setupSceneLighting(scene);
+
+    // Composer setup
+    renderer.setClearColor(0x000000, 0);
+    composer = new EffectComposer(renderer);
+    
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    moebiusPass = new ShaderPass(MoebiusShader);
+    moebiusPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+    moebiusPass.uniforms.cameraNear.value = camera.near;
+    moebiusPass.uniforms.cameraFar.value = camera.far;
+    composer.addPass(moebiusPass);
+
+    // Create depth texture for the shader
+    const depthTexture = new THREE.DepthTexture(window.innerWidth, window.innerHeight);
+    const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+      depthTexture: depthTexture,
+      depthBuffer: true
+    });
+    composer.renderTarget1 = renderTarget.clone();
+    composer.renderTarget2 = renderTarget.clone();
+    
+    // Create Normal render target
+    normalRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
+    
+    moebiusPass.uniforms.tDepth.value = depthTexture;
+    moebiusPass.uniforms.tNormal.value = normalRenderTarget.texture;
+
+    // Pass light direction
+    const light = scene.children.find(c => c.type === 'DirectionalLight') as THREE.DirectionalLight;
+    if (light) {
+      moebiusPass.uniforms.lightDirection.value.copy(light.position).normalize();
+    }
 
     // initGizmos();
     requestRender();
@@ -379,7 +440,6 @@
             mat.emissive.set(0xf2f2f2);
             mat.emissiveIntensity = 0.2;
 
-            // Prevent Z-fighting during collision/overlap
             mat.polygonOffset = true;
             mat.polygonOffsetFactor = -1;
             mat.polygonOffsetUnits = -4;
@@ -843,6 +903,9 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+      normalRenderTarget.setSize(window.innerWidth, window.innerHeight);
+      moebiusPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
     }
   }
   
@@ -970,7 +1033,23 @@
     }
 
     if (needsRender) {
-      renderer.render(scene, camera);
+      if (moebiusPass) {
+        moebiusPass.uniforms.time.value = performance.now() * 0.001;
+        
+        // --- Normal Pass ---
+        // Hide background for normal pass to avoid artifacts
+        const oldBackground = scene.background;
+        scene.background = null;
+        scene.overrideMaterial = normalMaterial;
+        renderer.setRenderTarget(normalRenderTarget);
+        renderer.render(scene, camera);
+        
+        // Restore for main pass
+        scene.overrideMaterial = null;
+        scene.background = oldBackground;
+        renderer.setRenderTarget(null);
+      }
+      composer.render();
       needsRender = false;
     }
   }
