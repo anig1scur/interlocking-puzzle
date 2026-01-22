@@ -9,6 +9,9 @@
   import {currentPuzzleId, puzzleData, currentStateId, activePieceId, moveCount, isVictory} from '../stores/gameStore';
   import {tryMove as tryLogicMove} from '../lib/puzzleLogic';
   import {PIECE_COLORS, createPieceMaterial, setupSceneLighting, disposeSceneObjects} from '../lib/visuals';
+  import {audioManager} from '../lib/audio';
+  import {frameCameraToPuzzle, snapToView as snapToViewHelper} from '../lib/scene';
+  import {keyboardInput} from '../lib/input';
   import type {PuzzleData} from '../types/puzzle';
 
   let container: HTMLDivElement;
@@ -40,10 +43,7 @@
   let winOngoing = false;
   let lastMoveTime = 0;
   const MOVE_COOLDOWN = 200; // ms between moves during drag
-  let keysPressed = new Set<string>();
-
-  // Audio
-  let audioCtx: AudioContext;
+  // keysPressed removed - using keyboardInput
 
   $: if ($currentPuzzleId) {
     isLoaded = false;
@@ -61,7 +61,7 @@
   $: {
     $activePieceId;
     collisionCount = 0;
-    if (isLoaded) playSound('select');
+    if (isLoaded) audioManager.play('select');
   }
 
   $: updateVisuals($activePieceId, isGhostMode, isDragging ? ($activePieceId ?? undefined) : undefined, collisionCount);
@@ -69,7 +69,8 @@
 
   onMount(() => {
     initScene();
-    initAudio();
+    audioManager.init();
+    keyboardInput.init();
     window.addEventListener('resize', onWindowResize);
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
@@ -79,6 +80,7 @@
       window.removeEventListener('resize', onWindowResize);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
+      keyboardInput.dispose();
       if (controls) controls.removeEventListener('change', requestRender);
       renderer.dispose();
 
@@ -115,74 +117,6 @@
     needsRender = true;
   }
 
-  function initAudio() {
-    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-  }
-
-  function playSound(type: 'success' | 'fail' | 'win' | 'thud' | 'slide' | 'pop' | 'select') {
-    if (!audioCtx) return;
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    const currTime = audioCtx.currentTime;
-
-    if (type === 'success' || type === 'pop') {
-      // Pop / Snap sound
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(440, currTime);
-      oscillator.frequency.exponentialRampToValueAtTime(880, currTime + 0.1);
-      gainNode.gain.setValueAtTime(0.001, currTime);
-      gainNode.gain.linearRampToValueAtTime(0.5, currTime + 0.005);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.1);
-      oscillator.start();
-      oscillator.stop(currTime + 0.1);
-    } else if (type === 'fail' || type === 'thud') {
-      // Dull thud
-      oscillator.type = 'triangle';
-      oscillator.frequency.setValueAtTime(120, currTime);
-      oscillator.frequency.exponentialRampToValueAtTime(60, currTime + 0.15);
-      gainNode.gain.setValueAtTime(0.001, currTime);
-      gainNode.gain.linearRampToValueAtTime(0.8, currTime + 0.005);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.15);
-      oscillator.start();
-      oscillator.stop(currTime + 0.15);
-    } else if (type === 'win') {
-      [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.connect(g);
-        g.connect(audioCtx.destination);
-        const startTime = currTime + i * 0.1;
-        o.frequency.setValueAtTime(freq, startTime);
-        g.gain.setValueAtTime(0.001, startTime);
-        g.gain.linearRampToValueAtTime(0.2, startTime + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
-        o.start(startTime);
-        o.stop(startTime + 0.3);
-      });
-    } else if (type === 'slide') {
-      oscillator.type = 'triangle';
-      oscillator.frequency.setValueAtTime(150, currTime);
-      oscillator.frequency.exponentialRampToValueAtTime(50, currTime + 0.04);
-      gainNode.gain.setValueAtTime(0.001, currTime);
-      gainNode.gain.linearRampToValueAtTime(0.1, currTime + 0.005);
-      gainNode.gain.linearRampToValueAtTime(0, currTime + 0.04);
-      oscillator.start();
-      oscillator.stop(currTime + 0.04);
-    } else if (type === 'select') {
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(660, currTime);
-      oscillator.frequency.exponentialRampToValueAtTime(440, currTime + 0.05);
-      gainNode.gain.setValueAtTime(0.001, currTime);
-      gainNode.gain.linearRampToValueAtTime(0.1, currTime + 0.005);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, currTime + 0.05);
-      oscillator.start();
-      oscillator.stop(currTime + 0.05);
-    }
-  }
 
   async function loadPuzzleAssets(data: PuzzleData) {
     if (!scene) return;
@@ -243,7 +177,7 @@
     await Promise.all(loadPromises);
 
     updatePiecePositions(data.states['0'], true);
-    frameCameraToPuzzle();
+    frameCameraToPuzzle(camera, controls, pieceMeshes, requestRender);
     updateVisuals($activePieceId, isGhostMode);
     isLoaded = true;
   }
@@ -303,12 +237,12 @@
                 {x: 1.05, y: 1.05, z: 1.05},
                 {x: 1, y: 1, z: 1, duration: 0.3, ease: 'power2.out', onUpdate: requestRender},
               );
-              playSound('slide');
+              audioManager.play('slide');
             }
           }
         }
       } else if (group.visible) {
-        if (!silent) playSound('pop');
+        if (!silent) audioManager.play('pop');
 
         // Fly away logic: move towards camera/away from center
         const awayDir = group.position.clone().normalize().multiplyScalar(1.0);
@@ -470,45 +404,9 @@
       });
     }
   }
-
-  function frameCameraToPuzzle() {
-    if (pieceMeshes.length === 0 || !camera || !controls) return;
-
-    const box = new THREE.Box3();
-    pieceMeshes.forEach((mesh) => {
-      const meshBox = new THREE.Box3().setFromObject(mesh);
-      box.union(meshBox);
-    });
-
-    const center = box.getCenter(new THREE.Vector3());
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
-
-    const fov = camera.fov * (Math.PI / 180);
-    let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-    cameraZ *= 2.0;
-
-    // Smooth transition
-    gsap.to(camera.position, {
-      x: center.x + cameraZ,
-      y: center.y + cameraZ,
-      z: center.z + cameraZ,
-      duration: 1.0,
-      ease: 'power2.inOut',
-      onUpdate: () => {
-        camera.lookAt(center);
-        controls.target.copy(center);
-        controls.update();
-        requestRender();
-      },
-    });
-  }
-
   // Interaction Handlers
   function onPointerDown(event: MouseEvent) {
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    audioManager.resume();
 
     if (event.button !== 0 || !$activePieceId) return;
 
@@ -647,7 +545,7 @@
             updateVisuals($activePieceId, isGhostMode, $activePieceId ?? undefined, collisionCount);
           }
 
-          if (Math.random() > 0.85) playSound('thud');
+          if (Math.random() > 0.85) audioManager.play('thud');
           isColliding = true;
         } else {
           hitCounted = false;
@@ -720,7 +618,6 @@
   }
 
   function onKeyUp(event: KeyboardEvent) {
-    keysPressed.delete(event.key.toLowerCase());
     if (event.code === 'Space') {
       isGhostMode = false;
     }
@@ -728,7 +625,6 @@
 
   function onKeyDown(event: KeyboardEvent) {
     const key = event.key.toLowerCase();
-    keysPressed.add(key);
 
     if (event.code === 'Space') {
       if (!isGhostMode) isGhostMode = true;
@@ -767,77 +663,18 @@
       return;
     }
 
-    // Camera control is handled in animate()
     if (['w', 'a', 's', 'd'].includes(key)) {
       return;
     }
 
     if ($activePieceId) {
-      handleKeyboardMove(event.key);
-    }
-  }
-
-  function handleKeyboardMove(key: string) {
-    const right = new THREE.Vector3();
-    const up = new THREE.Vector3();
-    const forward = new THREE.Vector3();
-
-    camera.matrixWorld.extractBasis(right, up, forward);
-    forward.negate();
-
-    let targetScreenVec = new THREE.Vector3();
-    const lowerKey = key.toLowerCase();
-
-    switch (key) {
-      case 'ArrowUp':
-      case 'i':
-        targetScreenVec.copy(up);
-        break;
-      case 'ArrowDown':
-      case 'k':
-        targetScreenVec.copy(up).negate();
-        break;
-      case 'ArrowLeft':
-      case 'j':
-        targetScreenVec.copy(right).negate();
-        break;
-      case 'ArrowRight':
-      case 'l':
-        targetScreenVec.copy(right);
-        break;
-      case 'u':
-        targetScreenVec.copy(forward);
-        break;
-      case 'o':
-        targetScreenVec.copy(forward).negate();
-        break;
-    }
-
-    if (targetScreenVec.length() === 0) return;
-
-    let bestAxis: 'x' | 'y' | 'z' = 'x';
-    let bestDot = 0;
-    let delta = 0;
-
-    const axes = [
-      {name: 'x', vec: new THREE.Vector3(1, 0, 0)},
-      {name: 'y', vec: new THREE.Vector3(0, 1, 0)},
-      {name: 'z', vec: new THREE.Vector3(0, 0, 1)},
-    ];
-
-    axes.forEach((a) => {
-      const dot = targetScreenVec.dot(a.vec);
-      if (Math.abs(dot) > Math.abs(bestDot)) {
-        bestDot = dot;
-        bestAxis = a.name as 'x' | 'y' | 'z';
-        delta = dot > 0 ? 1 : -1;
+      const move = keyboardInput.getPieceMoveAxis(event.key, camera);
+      if (move) {
+        attemptMove($activePieceId, move.axis, move.delta, 'keyboard');
       }
-    });
-
-    if (delta !== 0) {
-      attemptMove($activePieceId!, bestAxis, delta, 'keyboard');
     }
   }
+
 
   function attemptMove(pieceId: string, axis: 'x' | 'y' | 'z', delta: number, source = 'drag') {
     if (!$puzzleData) return;
@@ -863,7 +700,7 @@
     if (nextState) {
       currentStateId.set(nextState);
       moveCount.update((n) => n + 1);
-      playSound('success');
+      audioManager.play('success');
 
       // Reset collision state on success (restore from ghost mode)
       collisionCount = 0;
@@ -898,7 +735,7 @@
         }, 250);
       }
     } else if (source === 'keyboard') {
-      playSound('fail');
+      audioManager.play('fail');
 
       isColliding = true;
       collisionCount++;
@@ -935,7 +772,7 @@
 
     setTimeout(() => {
       isVictory.set(true);
-      playSound('win');
+      audioManager.play('win');
       confetti({
         particleCount: 60,
         spread: 90,
@@ -1009,43 +846,7 @@
   }
 
   export function snapToView(view: string) {
-    if (!camera) return;
-    const distance = camera.position.length();
-    let targetPos = new THREE.Vector3();
-
-    switch (view) {
-      case 'front':
-        targetPos.set(0, 0, distance);
-        break;
-      case 'back':
-        targetPos.set(0, 0, -distance);
-        break;
-      case 'left':
-        targetPos.set(-distance, 0, 0);
-        break;
-      case 'right':
-        targetPos.set(distance, 0, 0);
-        break;
-      case 'top':
-        targetPos.set(0, distance, 0);
-        break;
-      case 'bottom':
-        targetPos.set(0, -distance, 0);
-        break;
-    }
-
-    gsap.to(camera.position, {
-      x: targetPos.x,
-      y: targetPos.y,
-      z: targetPos.z,
-      duration: 0.8,
-      ease: 'power2.inOut',
-      onUpdate: () => {
-        camera.lookAt(0, 0, 0);
-        controls.update();
-        requestRender();
-      },
-    });
+    snapToViewHelper(view, camera, controls, requestRender);
   }
 
   function animate() {
@@ -1054,15 +855,20 @@
     // Auto-update controls if damping is enabled
     if (controls) {
       // WASD Smooth Camera Control
-      if (keysPressed.has('w') || keysPressed.has('a') || keysPressed.has('s') || keysPressed.has('d')) {
+      if (
+        keyboardInput.isPressed('w') ||
+        keyboardInput.isPressed('a') ||
+        keyboardInput.isPressed('s') ||
+        keyboardInput.isPressed('d')
+      ) {
         const rotateAngle = Math.PI / 120;
         const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
         const spherical = new THREE.Spherical().setFromVector3(offset);
 
-        if (keysPressed.has('a')) spherical.theta += rotateAngle;
-        if (keysPressed.has('d')) spherical.theta -= rotateAngle;
-        if (keysPressed.has('w')) spherical.phi += rotateAngle;
-        if (keysPressed.has('s')) spherical.phi -= rotateAngle;
+        if (keyboardInput.isPressed('a')) spherical.theta += rotateAngle;
+        if (keyboardInput.isPressed('d')) spherical.theta -= rotateAngle;
+        if (keyboardInput.isPressed('w')) spherical.phi += rotateAngle;
+        if (keyboardInput.isPressed('s')) spherical.phi -= rotateAngle;
 
         spherical.makeSafe();
         offset.setFromSpherical(spherical);
