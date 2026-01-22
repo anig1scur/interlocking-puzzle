@@ -628,7 +628,6 @@
 
   function onKeyUp(event: KeyboardEvent) {
     if (event.code === 'Space') {
-      isGhostMode = false;
     }
   }
 
@@ -649,7 +648,7 @@
     const key = event.key.toLowerCase();
     
     if (event.code === 'Space') {
-      if (!isGhostMode) isGhostMode = true;
+      event.preventDefault();
       return;
     }
 
@@ -874,9 +873,7 @@
       if (keyboardInput.isPressed('a')) camRotateTheta += rotateSpeed;
       if (keyboardInput.isPressed('d')) camRotateTheta -= rotateSpeed;
 
-      // Gamepad right stick (Camera, mapped to axes 0/1 now) - reduce sensitivity as requested
-      // Previous multiplier was 2, reducing to 0.7 for smoother control
-      const gpCamSpeed = 0.7;
+      const gpCamSpeed = 1;
       if (Math.abs(gpState.cameraDelta.x) > 0.1) camRotateTheta -= gpState.cameraDelta.x * rotateSpeed * gpCamSpeed;
       if (Math.abs(gpState.cameraDelta.y) > 0.1) camRotatePhi += gpState.cameraDelta.y * rotateSpeed * gpCamSpeed;
 
@@ -930,9 +927,10 @@
           showLeaderboard.update(v => !v);
       }
       
-      // Ghost Mode (Trigger Hold)
-      if (gpState.actions.ghostMode !== isGhostMode) {
-          isGhostMode = gpState.actions.ghostMode;
+      // Ghost Mode (Keyboard Space or Gamepad Trigger)
+      const targetGhostMode = keyboardInput.isPressed(' ') || gpState.actions.ghostMode;
+      if (targetGhostMode !== isGhostMode) {
+          isGhostMode = targetGhostMode;
           updateVisuals($activePieceId, isGhostMode, undefined, collisionCount);
           requestRender();
       }

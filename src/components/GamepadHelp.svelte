@@ -16,7 +16,7 @@
 
 <!-- Floating Toggle Button -->
 <button
-  class="fixed bottom-10 left-10 z-40 text-white/70 hover:text-white cursor-pointer hover:scale-110 active:scale-95 transition-all shadow-xl backdrop-blur-md"
+  class="fixed bottom-10 left-6 md:left-10 z-40 text-white/70 hover:text-white cursor-pointer hover:scale-110 active:scale-95 transition-all shadow-xl backdrop-blur-md"
   on:click={() => (showHelp = true)}
   title="Gamepad Controls"
 >
@@ -77,11 +77,11 @@
       transition:scale={{start: 0.95, duration: 200}}
       on:click|stopPropagation
     >
-      <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+      <div class="absolute -top-16 rotate-30 -right-12 p-0 opacity-5 pointer-events-none">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="120"
-          height="120"
+          width="280"
+          height="280"
           viewBox="0 0 24 24"
           fill="currentColor"
           ><path

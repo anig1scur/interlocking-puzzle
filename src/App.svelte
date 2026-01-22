@@ -46,7 +46,7 @@
   <div class="absolute top-4 md:top-10 right-4 md:right-10 pointer-events-none flex flex-col gap-4 md:gap-6 items-end max-w-fit z-10 transition-all duration-1000 ease-out animate-in slide-in-from-right-12 fade-in">
     <div class="pointer-events-auto md:hidden flex items-center gap-3">
       <button 
-        class="group flex items-center justify-center p-2.5 rounded-xl bg-white/5 border border-white/10 active:bg-white active:border-white transition-all shadow-lg pointer-events-auto"
+        class="hidden md:block group flex items-center justify-center p-2.5 rounded-xl bg-white/5 border border-white/10 active:bg-white active:border-white transition-all shadow-lg pointer-events-auto"
         on:click={() => showLeaderboard.set(true)}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white group-active:text-black transition-colors"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
@@ -90,8 +90,8 @@
   
   <div class="absolute bottom-8 left-0 right-0 pointer-events-none flex justify-center md:hidden z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500"
        style="margin-bottom: env(safe-area-inset-bottom, 0px);">
-    <div class="px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 shadow-lg">
-      <span class="text-[9px] font-medium text-white/60 tracking-wider">For the best experience, please use a PC.</span>
+    <div class="px-4 py-1.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 shadow-lg">
+      <span class="text-[9px] font-medium text-white/60 tracking-wider">For a better experience, please play on PC.</span>
     </div>
   </div>
 </main>
