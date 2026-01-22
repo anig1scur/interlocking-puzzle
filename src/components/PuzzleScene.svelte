@@ -6,12 +6,13 @@
   import gsap from 'gsap';
   import confetti from 'canvas-confetti';
 
-  import {currentPuzzleId, puzzleData, currentStateId, activePieceId, moveCount, isVictory} from '../stores/gameStore';
+  import {currentPuzzleId, puzzleData, currentStateId, activePieceId, moveCount, isVictory, nextPuzzle, prevPuzzle, showLeaderboard} from '../stores/gameStore';
   import {tryMove as tryLogicMove} from '../lib/puzzleLogic';
   import {PIECE_COLORS, createPieceMaterial, setupSceneLighting, disposeSceneObjects} from '../lib/visuals';
   import {audioManager} from '../lib/audio';
   import {frameCameraToPuzzle, snapToView as snapToViewHelper} from '../lib/scene';
   import {keyboardInput} from '../lib/input';
+  import {gamepadInput} from '../lib/gamepad';
   import type {PuzzleData} from '../types/puzzle';
 
   let container: HTMLDivElement;
@@ -42,8 +43,9 @@
   let isColliding = false;
   let winOngoing = false;
   let lastMoveTime = 0;
-  const MOVE_COOLDOWN = 200; // ms between moves during drag
-  // keysPressed removed - using keyboardInput
+  const MOVE_COOLDOWN = 200; 
+  let lastGamepadMoveTime = 0;
+  let debugGamepadState: any = null;
 
   $: if ($currentPuzzleId) {
     isLoaded = false;
@@ -178,6 +180,13 @@
 
     updatePiecePositions(data.states['0'], true);
     frameCameraToPuzzle(camera, controls, pieceMeshes, requestRender);
+
+    if (pieceIds.includes('piece1')) {
+      activePieceId.set('piece1');
+    } else if (pieceIds.length > 0) {
+      activePieceId.set(pieceIds[0]);
+    }
+
     updateVisuals($activePieceId, isGhostMode);
     isLoaded = true;
   }
@@ -623,9 +632,22 @@
     }
   }
 
+  function cycleActivePiece(direction: number) {
+    const pieceIds = Object.keys(pieceGroups);
+    if (pieceIds.length > 0) {
+      if (!$activePieceId) {
+        activePieceId.set(pieceIds[0]);
+      } else {
+        const currentIndex = pieceIds.indexOf($activePieceId);
+        const nextIndex = (currentIndex + direction + pieceIds.length) % pieceIds.length;
+        activePieceId.set(pieceIds[nextIndex]);
+      }
+    }
+  }
+
   function onKeyDown(event: KeyboardEvent) {
     const key = event.key.toLowerCase();
-
+    
     if (event.code === 'Space') {
       if (!isGhostMode) isGhostMode = true;
       return;
@@ -645,21 +667,7 @@
     // Tab to cycle pieces
     if (event.key === 'Tab') {
       event.preventDefault();
-      const pieceIds = Object.keys(pieceGroups);
-      if (pieceIds.length > 0) {
-        if (!$activePieceId) {
-          activePieceId.set('piece1' in pieceGroups ? 'piece1' : pieceIds[0]);
-        } else {
-          const currentIndex = pieceIds.indexOf($activePieceId);
-          let nextIndex;
-          if (event.shiftKey) {
-            nextIndex = (currentIndex - 1 + pieceIds.length) % pieceIds.length;
-          } else {
-            nextIndex = (currentIndex + 1) % pieceIds.length;
-          }
-          activePieceId.set(pieceIds[nextIndex]);
-        }
-      }
+      cycleActivePiece(event.shiftKey ? -1 : 1);
       return;
     }
 
@@ -726,15 +734,15 @@
       
       updateVisuals(pieceId, isGhostMode, pieceId, collisionCount, linkedIds);
 
-      // For keyboard moves, restore opaque state after animation duration
-      if (source === 'keyboard') {
+      // For keyboard/gamepad moves, restore opaque state after animation duration
+      if (source === 'keyboard' || source === 'gamepad') {
         setTimeout(() => {
           if (!isDragging) {
             updateVisuals(pieceId, isGhostMode, undefined, collisionCount);
           }
         }, 250);
       }
-    } else if (source === 'keyboard') {
+    } else if (source === 'keyboard' || source === 'gamepad') {
       audioManager.play('fail');
 
       isColliding = true;
@@ -852,34 +860,81 @@
   function animate() {
     animationFrameId = requestAnimationFrame(animate);
 
-    // Auto-update controls if damping is enabled
     if (controls) {
-      // WASD Smooth Camera Control
-      if (
-        keyboardInput.isPressed('w') ||
-        keyboardInput.isPressed('a') ||
-        keyboardInput.isPressed('s') ||
-        keyboardInput.isPressed('d')
-      ) {
-        const rotateAngle = Math.PI / 120;
+      const gpState = gamepadInput.poll();
+      debugGamepadState = false && gpState;
+
+      // --- 1. Camera Control ---
+      let camRotatePhi = 0;
+      let camRotateTheta = 0;
+      const rotateSpeed = Math.PI / 120; // Base speed per frame
+
+      if (keyboardInput.isPressed('w')) camRotatePhi += rotateSpeed;
+      if (keyboardInput.isPressed('s')) camRotatePhi -= rotateSpeed;
+      if (keyboardInput.isPressed('a')) camRotateTheta += rotateSpeed;
+      if (keyboardInput.isPressed('d')) camRotateTheta -= rotateSpeed;
+
+      // Gamepad right stick (Camera, mapped to axes 0/1 now) - reduce sensitivity as requested
+      // Previous multiplier was 2, reducing to 0.7 for smoother control
+      const gpCamSpeed = 0.7;
+      if (Math.abs(gpState.cameraDelta.x) > 0.1) camRotateTheta -= gpState.cameraDelta.x * rotateSpeed * gpCamSpeed;
+      if (Math.abs(gpState.cameraDelta.y) > 0.1) camRotatePhi += gpState.cameraDelta.y * rotateSpeed * gpCamSpeed;
+
+      if (camRotatePhi !== 0 || camRotateTheta !== 0) {
         const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
         const spherical = new THREE.Spherical().setFromVector3(offset);
-
-        if (keyboardInput.isPressed('a')) spherical.theta += rotateAngle;
-        if (keyboardInput.isPressed('d')) spherical.theta -= rotateAngle;
-        if (keyboardInput.isPressed('w')) spherical.phi += rotateAngle;
-        if (keyboardInput.isPressed('s')) spherical.phi -= rotateAngle;
-
+        
+        spherical.theta += camRotateTheta;
+        spherical.phi += camRotatePhi;
+        
         spherical.makeSafe();
         offset.setFromSpherical(spherical);
         camera.position.addVectors(controls.target, offset);
-
+        
         controls.update();
         requestRender();
       } else if (controls.enableDamping) {
-        if (controls.update()) {
+        if (controls.update()) requestRender();
+      }
+
+      // --- 2. Active Piece Movement (Left Stick / D-Pad) ---
+      if ($activePieceId && (Math.abs(gpState.moveVector.x) > 0.2 || Math.abs(gpState.moveVector.y) > 0.2)) {
+         const now = Date.now();
+         // Limit repeat rate for gamepad moves
+         if (now - lastGamepadMoveTime > 150) { 
+             const moveAxis = keyboardInput.getMoveAxisFromScreenVector(gpState.moveVector.x, gpState.moveVector.y, camera);
+             if (moveAxis) {
+                 const { axis, delta } = moveAxis;
+                 attemptMove($activePieceId, axis, delta, 'gamepad');
+                 lastGamepadMoveTime = now;
+             }
+         }
+      }
+
+      // --- 3. Actions ---
+      if (gpState.actions.nextPiece) cycleActivePiece(1);
+      if (gpState.actions.prevPiece) cycleActivePiece(-1);
+      
+      // Next Level
+      if (gpState.actions.nextLevel) {
+          nextPuzzle();
+      }
+
+      // Prev Level
+      if (gpState.actions.prevLevel) {
+          prevPuzzle();
+      }
+
+      // Leaderboard toggle
+      if (gpState.actions.toggleLeaderboard) {
+          showLeaderboard.update(v => !v);
+      }
+      
+      // Ghost Mode (Trigger Hold)
+      if (gpState.actions.ghostMode !== isGhostMode) {
+          isGhostMode = gpState.actions.ghostMode;
+          updateVisuals($activePieceId, isGhostMode, undefined, collisionCount);
           requestRender();
-        }
       }
     }
 
@@ -932,3 +987,9 @@
   on:dblclick={onDoubleClick}
   role="presentation"
 ></div>
+
+{#if debugGamepadState}
+<div class="absolute top-0 right-0 p-2 bg-black/70 text-white text-xs font-mono pointer-events-none z-50 whitespace-pre">
+  GP: {JSON.stringify(debugGamepadState, null, 2)}
+</div>
+{/if}

@@ -11,6 +11,7 @@ export const puzzleList: Writable<PuzzleManifestItem[]> = writable([]);
 export const isLoading: Writable<boolean> = writable(false);
 export const startTime: Writable<number | null> = writable(null);
 export const completionTime: Writable<number | null> = writable(null);
+export const showLeaderboard: Writable<boolean> = writable(false);
 
 export const resetGame = () => {
     currentStateId.set("0");
@@ -49,4 +50,15 @@ export const nextPuzzle = () => {
 
   const nextIndex = (currentIndex + 1) % list.length;
   selectPuzzle(list[nextIndex].id);
+};
+
+export const prevPuzzle = () => {
+  const list = get(puzzleList);
+  if (list.length === 0) return;
+
+  const currentId = get(currentPuzzleId);
+  const currentIndex = list.findIndex(p => p.id === currentId);
+
+  const prevIndex = (currentIndex - 1 + list.length) % list.length;
+  selectPuzzle(list[prevIndex].id);
 };

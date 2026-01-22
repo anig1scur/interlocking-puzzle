@@ -6,12 +6,13 @@
   import PieceAnalysis from './components/PieceAnalysis.svelte';
   import WinScreen from './components/WinScreen.svelte';
   import LeaderboardPanel from './components/LeaderboardPanel.svelte';
+  import GamepadHelp from './components/GamepadHelp.svelte';
   import { inject } from '@vercel/analytics';
+  import { showLeaderboard } from './stores/gameStore';
 
   inject();
 
   let puzzleScene: PuzzleScene;
-  let showLeaderboard = false;
 
   function handleViewChange(event: CustomEvent<string>) {
     if (puzzleScene) {
@@ -32,7 +33,7 @@
     <div class="pointer-events-auto hidden md:flex items-center gap-3">
       <button 
         class="group flex items-center justify-center p-3 hover:bg-white/5 cursor-pointer rounded-2xl shadow-xl pointer-events-auto"
-        on:click={() => showLeaderboard = true}
+        on:click={() => showLeaderboard.set(true)}
         title="Leaderboard"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
@@ -46,7 +47,7 @@
     <div class="pointer-events-auto md:hidden flex items-center gap-3">
       <button 
         class="group flex items-center justify-center p-2.5 rounded-xl bg-white/5 border border-white/10 active:bg-white active:border-white transition-all shadow-lg pointer-events-auto"
-        on:click={() => showLeaderboard = true}
+        on:click={() => showLeaderboard.set(true)}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white group-active:text-black transition-colors"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
       </button>
@@ -62,30 +63,30 @@
     </div>
   </div>
 
-  <!-- Bottom Instructions - Hidden on Mobile -->
   <div class="absolute bottom-10 left-0 right-0 pointer-events-none hidden md:flex justify-center z-10 select-none animate-in slide-in-from-bottom-12 fade-in duration-1000 delay-300">
-    <div class="flex items-center gap-6 bg-black/20 backdrop-blur-xl px-6 py-1.5 rounded-full border border-white/5 shadow-2xl opacity-40 hover:opacity-100 transition-opacity text-[10px] text-white/40 font-medium tracking-tight">
+    <div class="flex items-center gap-6 bg-black/20 backdrop-blur-xl px-6 py-1.5 rounded-full border border-white/5 shadow-2xl opacity-40 hover:opacity-100 transition-opacity text-[11px] text-white/40 font-medium tracking-tight">
       <div class="flex items-center gap-2 border-r border-white/5 pr-6 last:border-0 last:pr-0">
-        <span class="text-white/30 uppercase tracking-widest text-[8px]">View</span>
-        <span class="text-white/70 font-mono text-[9px]">Drag • WASD • R</span>
+        <span class="text-white/40 uppercase tracking-widest text-[8px]">View</span>
+        <span class="text-white/80 font-mono text-[9px]">Drag • WASD • R</span>
       </div>
       <div class="flex items-center gap-2 border-r border-white/5 pr-6 last:border-0 last:pr-0">
-        <span class="text-white/30 uppercase tracking-widest text-[8px]">Piece</span>
-        <span class="text-white/70 font-mono text-[9px]">DblClk • Tab • Esc</span>
+        <span class="text-white/40 uppercase tracking-widest text-[8px]">Piece</span>
+        <span class="text-white/80 font-mono text-[9px]">DblClk • Tab • Esc</span>
       </div>
       <div class="flex items-center gap-2 border-r border-white/5 pr-6 last:border-0 last:pr-0">
-        <span class="text-white/30 uppercase tracking-widest text-[8px]">Move</span>
-        <span class="text-white/70 font-mono text-[9px]">Drag • Arrows • IJKLUO</span>
+        <span class="text-white/40 uppercase tracking-widest text-[8px]">Move</span>
+        <span class="text-white/80 font-mono text-[9px]">Drag • Arrows • IJKLUO</span>
       </div>
       <div class="flex items-center gap-2 border-r border-white/5 pr-6 last:border-0 last:pr-0">
-        <span class="text-white/30 uppercase tracking-widest text-[8px]">Ghost</span>
-        <span class="text-white/70 font-mono text-[9px]">Space</span>
+        <span class="text-white/40 uppercase tracking-widest text-[8px]">Ghost</span>
+        <span class="text-white/80 font-mono text-[9px]">Space</span>
       </div>
     </div>
   </div>
 
   <WinScreen />
-  <LeaderboardPanel bind:show={showLeaderboard} />
+  <LeaderboardPanel />
+  <GamepadHelp />
   
   <div class="absolute bottom-8 left-0 right-0 pointer-events-none flex justify-center md:hidden z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500"
        style="margin-bottom: env(safe-area-inset-bottom, 0px);">

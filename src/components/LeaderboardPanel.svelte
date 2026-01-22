@@ -1,13 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { currentPuzzleId } from '../stores/gameStore';
+  import { currentPuzzleId, showLeaderboard } from '../stores/gameStore';
   import { fade, fly } from 'svelte/transition';
 
-  export let show = false;
   let leaderboard: Array<{name: string, time: number, moves?: number}> = [];
   let isLoading = false;
 
-  $: if (show && $currentPuzzleId) {
+  $: if ($showLeaderboard && $currentPuzzleId) {
     fetchLeaderboard();
   }
 
@@ -32,14 +31,14 @@
   }
 </script>
 
-{#if show}
+{#if $showLeaderboard}
 <div 
   class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
   transition:fade={{ duration: 200 }}
 >
   <div 
     class="absolute inset-0 bg-black/60 backdrop-blur-md"
-    on:click={() => show = false}
+    on:click={() => showLeaderboard.set(false)}
   ></div>
 
   <div 
@@ -48,7 +47,7 @@
   >
     <button 
       class="absolute top-6 right-8 text-white/20 hover:text-white transition-colors text-xs uppercase tracking-widest font-black"
-      on:click={() => show = false}
+      on:click={() => showLeaderboard.set(false)}
     >
       Close
     </button>

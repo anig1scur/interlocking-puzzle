@@ -111,6 +111,52 @@ export class KeyboardInput {
 
     return null;
   }
+  /**
+   * Calculates the axis and direction for a 2D screen-space vector (e.g. from Joystick or Mouse Drag).
+   */
+  getMoveAxisFromScreenVector(x: number, y: number, camera: THREE.Camera): { axis: 'x' | 'y' | 'z'; delta: number } | null {
+    const right = new THREE.Vector3();
+    const up = new THREE.Vector3();
+    const forward = new THREE.Vector3();
+
+    camera.matrixWorld.extractBasis(right, up, forward);
+
+    // Joystick Y is usually inverted (Up is -1), but let's assume input x/y are "Screen Right" and "Screen Up"
+    // The caller should normalize/invert as needed.
+
+    // Construct target vector in 3D world space (relative to camera view plane)
+    // x corresponds to camera Right
+    // y corresponds to camera Up
+    const targetVec = new THREE.Vector3()
+      .addScaledVector(right, x)
+      .addScaledVector(up, y);
+
+    if (targetVec.lengthSq() < 0.01) return null;
+
+    let bestAxis: 'x' | 'y' | 'z' = 'x';
+    let bestDot = 0;
+    let delta = 0;
+
+    const axes = [
+      { name: 'x', vec: new THREE.Vector3(1, 0, 0) },
+      { name: 'y', vec: new THREE.Vector3(0, 1, 0) },
+      { name: 'z', vec: new THREE.Vector3(0, 0, 1) },
+    ];
+
+    axes.forEach((a) => {
+      const dot = targetVec.dot(a.vec);
+      if (Math.abs(dot) > Math.abs(bestDot)) {
+        bestDot = dot;
+        bestAxis = a.name as 'x' | 'y' | 'z';
+        delta = dot > 0 ? 1 : -1;
+      }
+    });
+
+    if (delta !== 0) {
+      return { axis: bestAxis, delta };
+    }
+    return null;
+  }
 }
 
 export const keyboardInput = new KeyboardInput();
